@@ -1,7 +1,7 @@
 import sys
-sys.path.append('/Users/annikacarlson/Documents/ControlTheory/smdSim')
+sys.path.append('/Users/annikacarlson/Documents/school/controltheory/library')
 import numpy as np 
-import parameters.smdParam as P
+import library.smdParam as P
 
 class smdDynamics:
     def __init__(self, alpha=0.0):

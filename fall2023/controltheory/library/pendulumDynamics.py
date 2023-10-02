@@ -1,7 +1,7 @@
 import sys
-sys.path.append('/Users/annikacarlson/Documents/ControlTheory/simulations')
+sys.path.append('/Users/annikacarlson/Documents/school/controltheory/library')
 import numpy as np 
-import parameters.pendulumParam as P
+import library.pendulumParam as P
 
 class pendulumDynamics:
     def __init__(self, alpha=0.0):

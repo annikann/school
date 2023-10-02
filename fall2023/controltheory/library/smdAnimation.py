@@ -1,9 +1,9 @@
 import sys
-sys.path.append('/Users/annikacarlson/Documents/ControlTheory/smdSim')
+sys.path.append('/Users/annikacarlson/Documents/school/controltheory/library')
 from matplotlib import pyplot as plt
 from matplotlib import patches as mpatches
 import numpy as np 
-import parameters.smdParam as P
+import library.smdParam as P
 
 class smdAnimation:
     def __init__(self):

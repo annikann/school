@@ -1,9 +1,9 @@
 import sys
-sys.path.append('/Users/annikacarlson/Documents/ControlTheory/vtolSim')
+sys.path.append('/Users/annikacarlson/Documents/school/controltheory/library')
 from matplotlib import pyplot as plt
 from matplotlib import patches as mpatches
 import numpy as np 
-import parameters.vtolParam as P
+import library.vtolParam as P
 
 class vtolAnimation:
     def __init__(self):
