@@ -1,6 +1,6 @@
 import library.smdParam as P
 
-class controller:
+class smdController:
     def __init__(self):
         self.m = P.m1
         self.k = P.k
