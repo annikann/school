@@ -11,7 +11,7 @@ import keyboard
 # instantiate SMD, controller, and animation
 smd = smdDynamics(alpha=0.0)
 control = smdController()
-animation = smdAnimation()
+animation = smdAnimation(limits=3, multfigs=True)
 
 # add subplots
 z_plot = animation.fig.add_subplot(2, 2, 2)
@@ -47,7 +47,7 @@ while t < P.t_end:  # main simulation loop
     z = smd.update(u)
 
     sim_times.append(t)
-    zs.append(z)
+    zs.append(z[0])
     fs.append(u)
     z_targets.append(z_target)
 

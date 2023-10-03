@@ -6,18 +6,35 @@ import numpy as np
 import library.smdParam as P
 
 class smdAnimation:
-    def __init__(self):
-        self.flag_init = True  # Used to indicate initialization
-        # Initialize a figure and axes object
-        self.fig, self.ax = plt.subplots()
-        # Initializes a list of objects (patches and lines)
+    def __init__(self, limits, multfigs=False):
+        # set up plot
+        self.fig = plt.figure(1)
+        if multfigs == True:
+            self.ax = self.fig.add_subplot(1, 2, 1)
+        else:
+            self.ax = self.fig.add_subplot(1, 1, 1)
+        self.ax.set_xlim(left=-limits, right=limits)
+        # draw ground
+        plt.plot([-limits, limits], [0, 0], "k-", linewidth=3)     
+        # for list of objects
         self.handle = []
-        # Specify the x,y axis limits
-        plt.axis([-2, 2, -0.1, 3])
-        # Draw line for the ground
-        plt.plot([-3, 3], [0, 0], 'b--')
-        # label axes
-        plt.xlabel('z')
+        # init flag
+        self.flag_init = True
+        # set limits
+        self.limits = limits
+
+    # def __init__(self):
+    #     self.flag_init = True  # Used to indicate initialization
+    #     # Initialize a figure and axes object
+    #     self.fig, self.ax = plt.subplots()
+    #     # Initializes a list of objects (patches and lines)
+    #     self.handle = []
+    #     # Specify the x,y axis limits
+    #     plt.axis([-2, 2, -0.1, 3])
+    #     # Draw line for the ground
+    #     plt.plot([-3, 3], [0, 0], 'b--')
+    #     # label axes
+    #     plt.xlabel('z')
 
     def update(self, state):
         z = state[0][0]  # Horizontal position of cart, m
