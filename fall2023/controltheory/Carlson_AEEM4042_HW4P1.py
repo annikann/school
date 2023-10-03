@@ -11,7 +11,7 @@ import keyboard
 # instantiate SMD, controller, and animation
 smd = smdDynamics(alpha=0.0)
 control = smdController()
-animation = smdAnimation(limits=3, multfigs=True)
+animation = smdAnimation(limits=2, multfigs=True)
 
 # add subplots
 z_plot = animation.fig.add_subplot(2, 2, 2)
@@ -34,11 +34,13 @@ t = P.t_start  # time starts at t_start
 while t < P.t_end:  # main simulation loop
     if t <= 2:
         z_target = 0
-    elif t <= 20:
-        z_target = 1
-    elif t <= 30:
-        z_target = 1.5
+    elif t <= 10:
+        z_target = 0.5
+    elif t <= 25:
+        z_target = 1.0
     elif t <= 40:
+        z_target = 1.5
+    elif t <= 55:
         z_target = 0.5
     else:
         z_target = 0
@@ -55,8 +57,8 @@ while t < P.t_end:  # main simulation loop
 
     z_plot.clear(); f_plot.clear()
     z_plot.plot(sim_times, zs, label="state", color='c')
-    z_plot.plot(sim_times, z_targets, label="target", color='pink')
-    z_plot.legend(loc="lower right")
+    z_plot.plot(sim_times, z_targets, label="target", color='m')
+    z_plot.legend(loc="upper left")
     z_plot.set_ylabel("z (m)")
     z_plot.grid()
 
@@ -64,7 +66,7 @@ while t < P.t_end:  # main simulation loop
     f_plot.set_ylabel("Force (N)")
     f_plot.grid()
 
-    plt.pause(0.001)
+    plt.pause(0.01)
     t += P.Ts
 
     if keyboard.is_pressed('q'): break
