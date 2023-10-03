@@ -12,7 +12,7 @@ class smdAnimation:
             self.ax = self.fig.add_subplot(1, 2, 1)
         else:
             self.ax = self.fig.add_subplot(1, 1, 1)
-        self.ax.set_xlim(left=-limits, right=limits)
+        self.ax.set_xlim(-limits, limits)
         # draw ground
         plt.plot([-limits, limits], [0, 0])     
         # for list of objects
