@@ -14,7 +14,7 @@ class vtolAnimation:
         else:
             self.ax = self.fig.add_subplot(1, 1, 1)
         # draw ground
-        plt.plot([-limits, limits], [0, 0], "k-", linewidth=3)
+        plt.plot([-limits, limits], [0, 0])
         # for lsit of objects
         self.handle = []
         # init flag

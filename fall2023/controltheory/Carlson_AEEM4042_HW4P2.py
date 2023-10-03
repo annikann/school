@@ -15,8 +15,6 @@ animation = vtolAnimation(limits=10, multfigs=True)
 # add subplots
 z_plot = animation.fig.add_subplot(2, 2, 2)
 f_plot = animation.fig.add_subplot(2, 2, 4)
-z_plot.set_ylabel("z (m)")
-f_plot.set_ylabel("Force (N)")
 
 # empty lists for plotting
 sim_times = []
@@ -27,18 +25,20 @@ z_targets = []
 # set initial values
 z = 0
 u = 0
-z_target = 0.25
+z_target = 0.0
 
 t = P.t_start  # time starts at t_start
 while t < P.t_end:
     if t <= 2:
-        z_target = 0.25
-    elif t <= 30:
-        z_target = 5
+        z_target = 0.0
+    elif t <= 25:
+        z_target = 4
     elif t <= 50:
-        z_target = 8
+        z_target = 9
     elif t <= 65:
-        z_target = 0.5
+        z_target = 2
+    elif t <= 80:
+        z_target = 5
     else:
         z_target = 0.25
 

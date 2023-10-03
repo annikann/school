@@ -24,9 +24,9 @@ thetadot0 = 0.0         # ,rads/sec
 # Simulation Parameters
 t_start = 0.0  # Start time of simulation
 t_end = 500.0  # End time of simulation
-Ts = 0.01  # sample time for simulation
+Ts = 0.1  # sample time for simulation
 t_plot = 0.1  # the plotting and animation is updated at this rate
 
 # saturation limits
-F_max = 40.0                # Max Force, N
+F_max = 25.0                # Max Force, N
 

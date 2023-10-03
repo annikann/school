@@ -8,8 +8,8 @@ class vtolController:
         self.kD = 0.75
 
     def update(self, hc, state):
-        h = state[1]
-        hdot = state[4]
+        h = state[2]
+        hdot = state[3]
         feq = P.g*(self.mc + 2.*self.mr)
         fc = self.kP*(hc - h)  - self.kD*hdot
         f = feq + fc
