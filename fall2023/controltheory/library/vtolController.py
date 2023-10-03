@@ -1,6 +1,6 @@
 import library.vtolParam as P
 
-class controller:
+class vtolController:
     def __init__(self):
         self.mr = P.mr
         self.mc = P.mc
