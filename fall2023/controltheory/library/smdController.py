@@ -2,7 +2,7 @@ import library.smdParam as P
 
 class smdController:
     def __init__(self):
-        self.m = P.m1
+        self.m = P.m
         self.k = P.k
         self.b = P.b
         self.kP = 4.5
