@@ -7,19 +7,20 @@ import library.vtolParam as P
 
 class vtolAnimation:
     def __init__(self, limits, multfigs=False):
-        self.flag_init = True  # Used to indicate initialization
+         # set up plot
         self.fig = plt.figure(1)
         if multfigs == True:
             self.ax = self.fig.add_subplot(1, 2, 1)
         else:
             self.ax = self.fig.add_subplot(1, 1, 1)
-        self.ax.set_xlim(-limits, limits)
         # draw ground
-        plt.plot([-limits, limits], [0, 0])     
-        # Initialize a figure and axes object
-        self.fig, self.ax = plt.subplots()
-        # Initializes a list of objects (patches and lines)
+        plt.plot([-limits, limits], [0, 0], "k-", linewidth=3)
+        # for lsit of objects
         self.handle = []
+        # init flag
+        self.flag_init = True
+        # set limits
+        self.limits = limits
 
     def update(self, state):
         z = state[0][0]      # Horizontal position of vtol, m
@@ -29,7 +30,10 @@ class vtolAnimation:
         self.draw_body(z, h)
         self.draw_right(z, h, theta)
         self.draw_left(z, h, theta)
-        # self.ax.axis('equal')
+        # set axes and such
+        self.ax.set_aspect("equal")
+        self.ax.set_ylim(top=self.limits)
+        self.ax.set_xlim(left=-self.limits, right=self.limits)
         # Set initialization flag to False after first call
         if self.flag_init == True:
             self.flag_init = False
