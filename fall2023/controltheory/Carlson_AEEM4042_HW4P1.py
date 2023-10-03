@@ -70,8 +70,3 @@ while t < P.t_end:  # main simulation loop
     t += P.Ts
 
     if keyboard.is_pressed('q'): break
-
-# # Keeps the program from closing until the user presses a button.
-# print('Press key to close')
-# plt.waitforbuttonpress()
-# plt.close()
