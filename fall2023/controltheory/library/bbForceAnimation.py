@@ -22,9 +22,9 @@ class bbAnimation:
         # set limits
         self.limits = limits
 
-    def update(self, z, theta):
-        # z = state[0][0]      # Horizontal position of ball along beam, m
-        # theta = state[2][0]  # Angle of beam, rads    
+    def update(self, state):
+        z = state[0][0]      # Horizontal position of ball along beam, m
+        theta = state[2][0]  # Angle of beam, rads    
         # draw plot elements
         self.draw_ball(z, theta)
         self.draw_beam(theta)

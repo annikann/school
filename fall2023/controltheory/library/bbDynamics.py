@@ -33,8 +33,8 @@ class bbDynamics:
         thetadot = state[3][0]
         # Create equations of motion.
         zddot = z*(thetadot**2) - self.g*np.sin(theta)
-        thetaddot = (1/(((self.m2*(self.l**2))/3) + self.m1*(z**2)))*(F*self.l*np.cos(theta) - 2*self.m1*z*zdot*thetadot - \
-                                                                    self.m1*self.g*z*np.cos(theta) - (((self.m2*self.g*self.l)/2)*np.cos(theta)))
+        thetaddot = (F*self.l*np.cos(theta) - 2*self.m1*z*zdot*thetadot - self.m1*self.g*z*np.cos(theta) \
+                     - (((self.m2*self.g*self.l)/2)*np.cos(theta))) / (((self.m2*(self.l**2))/3) + self.m1*(z**2))
         # Build and return xdot
         xdot = np.array([[zdot], [zddot], [thetadot], [thetaddot]])
         return xdot
