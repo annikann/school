@@ -22,17 +22,16 @@ class bbAnimation:
         # set limits
         self.limits = limits
 
-    def update(self, state):
-        z = state[0][0]      # Horizontal position of ball along beam, m
-        theta = state[2][0]  # Angle of beam, rads
-        
+    def update(self, z, theta):
+        # z = state[0][0]      # Horizontal position of ball along beam, m
+        # theta = state[2][0]  # Angle of beam, rads    
         # draw plot elements
         self.draw_ball(z, theta)
         self.draw_beam(theta)
 
         # Set axes and limits
         self.ax.set_aspect("equal")
-        self.ax.set_ylim(top=self.limits*(5/6), bottom=-self.limits*(5/6))
+        self.ax.set_ylim(top=self.limits*(5/6), bottom=-0.01)
         self.ax.set_xlim(left=-0.01, right=self.limits)
         # Set initialization flag to False after first call
         if self.flag_init == True:

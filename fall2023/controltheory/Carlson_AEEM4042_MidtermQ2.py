@@ -37,12 +37,12 @@ Fs = []
 
 t = P.t_start  # time starts at t_start
 while t < P.t_end:
-    if t <= 3:
+    if t <= 2:
         F = P.g
-    elif t <= 5:
-        F = 11
-    elif t <= 7:
+    elif t <= 4:
         F = 10
+    elif t <= 6:
+        F = 8
 
     y = ballbeam.update(F)  # Propagate the dynamics
 
@@ -53,7 +53,7 @@ while t < P.t_end:
     thetas.append(y[2][0])
     thetadots.append(y[3][0])
 
-    animation.update(ballbeam.state)
+    animation.update(y[0][0], y[2][0])
 
     z_plot.clear(); zdot_plot.clear(); theta_plot.clear(); thetadot_plot.clear(); F_plot.clear()
     z_plot.plot(sim_times, zs, color='c', label='z'); z_plot.set_ylabel("Position (m)"); z_plot.legend(loc='upper right')
