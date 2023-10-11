@@ -3,13 +3,13 @@ sys.path.append('/Users/annikacarlson/Documents/school/controltheory/library')
 import matplotlib.pyplot as plt
 import numpy as np
 import library.bbParam as P
-from library.bbForceAnimation import bbAnimation
+from library.bbForceAnimation import bbForceAnimation
 from library.bbDynamics import bbDynamics
 import keyboard
 
 # instantiate VTOL, controller, and animation
 ballbeam = bbDynamics(alpha=0.0)
-animation = bbAnimation(limits=0.7, multfigs=True)
+animation = bbForceAnimation(limits=0.7, multfigs=True)
 
 # set initial values
 z0 = P.z0
@@ -33,15 +33,17 @@ Fs = []
 t = P.t_start  # time starts at t_start
 while t < P.t_end:
     if t <= 2.:
-        F = 13.23
+        F = 13.23  # Calculated equilibrium to keep beam in place
     elif t <= 2.5:
-        F = 13.6
+        F = 13.7
     elif t <= 4.:
-        F = 12
-    elif t <= 5.:
+        F = 11.3
+    elif t <= 4.5:
+        F = 12.
+    elif t <= 5.5:
+        F = 13.0
+    else:
         F = 13.23
-    # elif t <= 4.0:
-    #     F = 13.23
 
     y = ballbeam.update(F)  # Propagate the dynamics
     animation.update(ballbeam.state)

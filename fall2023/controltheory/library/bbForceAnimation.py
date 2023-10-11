@@ -2,15 +2,17 @@ import sys
 sys.path.append('/Users/annikacarlson/Documents/school/controltheory/library')
 from matplotlib import pyplot as plt
 from matplotlib import patches as mpatches
+import matplotlib.gridspec as gs
 import numpy as np 
 import library.bbParam as P
 
-class bbAnimation:
+class bbForceAnimation:
     def __init__(self, limits, multfigs=False):
          # set up plot
         self.fig = plt.figure(1)
         if multfigs == True:
-            self.ax = self.fig.add_subplot(2, 2, 1)
+            spec = gs.GridSpec(1, 1, left=0., bottom=0.35, right=0.6, top=0.8)
+            self.ax = plt.subplot(spec[0])
         else:
             self.ax = self.fig.add_subplot(1, 1, 1)
         # draw ground
@@ -31,7 +33,7 @@ class bbAnimation:
 
         # Set axes and limits
         self.ax.set_aspect("equal")
-        self.ax.set_ylim(top=self.limits*(5/6), bottom=-self.limits*(5/6))
+        self.ax.set_ylim(top=self.limits*(3/7), bottom=-self.limits*(3/7))
         self.ax.set_xlim(left=-0.01, right=self.limits)
         # Set initialization flag to False after first call
         if self.flag_init == True:
