@@ -31,7 +31,7 @@ class bbAnimation:
 
         # Set axes and limits
         self.ax.set_aspect("equal")
-        self.ax.set_ylim(top=self.limits*(5/6), bottom=-0.01)
+        self.ax.set_ylim(top=self.limits*(5/6), bottom=-self.limits*(5/6))
         self.ax.set_xlim(left=-0.01, right=self.limits)
         # Set initialization flag to False after first call
         if self.flag_init == True:

@@ -12,14 +12,10 @@ ballbeam = bbDynamics(alpha=0.0)
 animation = bbAnimation(limits=0.7, multfigs=True)
 
 # set initial values
-state = np.array([[0.5],   # z
-                  [0.],    # zdot
-                  [0.],    # theta
-                  [0.]])   # thetadot
-z0 = [0][0]
-zdot0 = [1][0]
-theta0 = [2][0]
-thetadot0 = [3][0]
+z0 = P.z0
+zdot0 = P.zdot0
+theta0 = P.theta0
+thetadot0 = P.thetadot0
 
 # add subplots
 z_plot = animation.fig.add_subplot(4, 2, 2)
@@ -27,7 +23,6 @@ zdot_plot = animation.fig.add_subplot(4, 2, 4)
 theta_plot = animation.fig.add_subplot(4, 2, 6)
 thetadot_plot = animation.fig.add_subplot(4, 2, 8)
 F_plot = animation.fig.add_subplot(4, 2, 7)
-# axpos = F_plot.get_position(); axpos.x0 += 0.0; axpos.y0 -= 0.02; F_plot.set_position(axpos)
 
 # empty lists for plotting
 sim_times = []
@@ -38,11 +33,11 @@ Fs = []
 t = P.t_start  # time starts at t_start
 while t < P.t_end:
     if t <= 2:
-        F = P.g
-    elif t <= 4:
-        F = 10
-    elif t <= 6:
-        F = 8
+        F = 13.23
+    elif t <= 2.5:
+        F = 13.3
+    elif t <= 3:
+        F = 13.0
 
     y = ballbeam.update(F)  # Propagate the dynamics
 
@@ -64,7 +59,7 @@ while t < P.t_end:
     F_plot.plot(sim_times, Fs, color='c'); F_plot.set_ylabel('Force (N)')
     z_plot.grid(); zdot_plot.grid(); theta_plot.grid(); thetadot_plot.grid(); F_plot.grid()
 
-    plt.pause(0.01)
+    plt.pause(0.1)
 
     t += P.Ts
     if keyboard.is_pressed("q"): break
