@@ -39,9 +39,9 @@ t = P.t_start  # time starts at t_start
 while t < P.t_end:
     if t <= 3:
         F = P.g
+    elif t <= 5:
+        F = 11
     elif t <= 7:
-        F = 12
-    elif t <= 9:
         F = 10
 
     y = ballbeam.update(F)  # Propagate the dynamics
