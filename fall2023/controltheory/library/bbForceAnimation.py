@@ -10,7 +10,7 @@ class bbAnimation:
          # set up plot
         self.fig = plt.figure(1)
         if multfigs == True:
-            self.ax = self.fig.add_subplot(1, 2, 1)
+            self.ax = self.fig.add_subplot(2, 2, 1)
         else:
             self.ax = self.fig.add_subplot(1, 1, 1)
         # draw ground

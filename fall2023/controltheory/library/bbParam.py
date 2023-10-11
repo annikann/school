@@ -20,6 +20,3 @@ t_end = 500.0  # End time of simulation
 Ts = 0.1  # sample time for simulation
 t_plot = 0.1  # the plotting and animation is updated at this rate
 
-# saturation limits
-F_max = 25.0                # Max Force, N
-

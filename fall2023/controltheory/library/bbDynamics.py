@@ -17,8 +17,7 @@ class bbDynamics:
         self.m2 = P.m2
         self.l = P.l
         self.r = P.r
-        self.g = P.g
-        self.force_limit = P.F_max       
+        self.g = P.g      
 
     def update(self, F):
         # saturate the input force
