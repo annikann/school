@@ -3,7 +3,7 @@ sys.path.append('/Users/annikacarlson/Documents/school/controltheory/library')
 import matplotlib.pyplot as plt
 import numpy as np
 import library.bbParam as P
-from library.bbAnimation import bbAnimation
+from library.bbForceAnimation import bbAnimation
 from library.bbDynamics import bbDynamics
 import keyboard
 
