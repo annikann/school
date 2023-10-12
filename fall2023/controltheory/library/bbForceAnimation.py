@@ -34,7 +34,7 @@ class bbForceAnimation:
         # Set axes and limits
         self.ax.set_aspect("equal")
         self.ax.set_ylim(top=self.limits*(3/7), bottom=-self.limits*(3/7))
-        self.ax.set_xlim(left=-0.01, right=self.limits)
+        self.ax.set_xlim(left=-0.2, right=self.limits)
         # Set initialization flag to False after first call
         if self.flag_init == True:
             self.flag_init = False
