@@ -24,28 +24,32 @@ f_plot = animation.fig.add_subplot(2, 2, 4)
 sim_times = []
 zs = []
 fs = []
+thetas = []
 zrs = []
 
-# set initial values
-# z = 0
-# u = 0
-# zr = 0
+# initial values
+sim_times.append(0.0)
+zs.append(P.z0)
+thetas.append(P.theta0)
+zrs.append(0.25)
+fs.append(0.0)
 
 print('Press Q to end simulation')
 t = P.t_start  # time starts at t_start
-# y = ballbeam.h()
+y = ballbeam.h()
 while t < P.t_end:
     t_next_plot = t + P.t_plot
 
     while t < t_next_plot:
 
         zr = 0.25 + reference.square(t)
-        d = disturbance.step(t)
         F = control.update(zr, ballbeam.state)
-        y = ballbeam.update(F + d)  # Propagate the dynamics
+        y = ballbeam.update(F)  # Propagate the dynamics
 
         sim_times.append(t)
         zs.append(y[0][0])
+        thetas.append(y[2][0])
+        # print(y[2][0])
         fs.append(F)
         zrs.append(zr)
 
@@ -55,7 +59,7 @@ while t < P.t_end:
 
 
     z_plot.clear(); f_plot.clear()
-    # z_plot.plot(sim_times, zs, label="state", color='c')
+    z_plot.plot(sim_times, zs, label="state", color='c')
     z_plot.plot(sim_times, zrs, label="target", color='m')
     z_plot.legend(loc="upper left")
     z_plot.set_ylabel("z (m)")

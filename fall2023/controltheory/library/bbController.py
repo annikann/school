@@ -7,6 +7,7 @@ class bbController:
         self.m2 = P.m2
         self.l = P.l
         self.Fmax = P.Fmax
+        self.thetamax = 30*np.pi/180
 
         self.kPth = 1.825
         self.kDth = 1.173
@@ -37,10 +38,11 @@ class bbController:
         # F = self.saturate(F, self.Fmax)
 
         thetar = self.kPz*(zr - z) - self.kDz*zdot + zr
+        thetar = self.saturate(thetar, self.thetamax)
+        # print(thetar)
         F = self.kPth*(thetar - theta) - self.kDth*thetadot
         F = self.saturate(F, self.Fmax)
         return F
-
     
     def saturate(self, u, limit):
         if abs(u) > limit:
