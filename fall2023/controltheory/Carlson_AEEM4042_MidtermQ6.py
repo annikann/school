@@ -11,7 +11,7 @@ import keyboard
 # instantiate VTOL, controller, and animation
 ballbeam = bbDynamics(alpha=0.0)
 control = bbController()
-reference = signalGenerator(amplitude=0.15, frequency=0.01)
+reference = signalGenerator(amplitude=0.25, frequency=0.01)
 animation = bbForceAnimation(limits=0.7, multfigs=False)
 
 # add subplots
@@ -27,8 +27,9 @@ zrs = []
 # set initial values
 z = 0
 u = 0
-zr = 0.25
+# zr = 0
 
+print('Press Q to end simulation')
 t = P.t_start  # time starts at t_start
 while t < P.t_end:
     t_next_plot = t + P.t_plot

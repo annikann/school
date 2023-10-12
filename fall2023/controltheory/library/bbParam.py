@@ -9,7 +9,7 @@ g = 9.8      # Gravity, m/s**2
 r = 0.015    # Radius of the ball, m
 
 # Initial Conditions
-z0 = 0.5                # ,m
+z0 = 0.0                # ,m
 zdot0 = 0.0             # ,m/s
 theta0 = 0.0            # ,rads
 thetadot0 = 0.0         # ,rads/sec
