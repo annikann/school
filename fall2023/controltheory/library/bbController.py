@@ -8,11 +8,16 @@ class bbController:
         self.l = P.l
         self.Fmax = P.Fmax
 
+        ## ORIGINAL GAINS
+        # self.kPth = 1.825
+        # self.kDth = 1.173
+        # self.kPz = -0.004949
+        # self.kDz = -0.031743
+
         self.kPth = 1.825
         self.kDth = 1.173
-        self.kPz = -0.00494
-        self.kDz = -0.0317
-        self.kDC = 1.
+        self.kPz = -0.0064 #last -0.007
+        self.kDz = -0.044  #last -0.05
 
     def update(self, zr, state):
         z = state[0][0]

@@ -12,8 +12,7 @@ import keyboard
 # instantiate VTOL, controller, and animation
 ballbeam = bbDynamics(alpha=0.0)
 control = bbController()
-reference = signalGenerator(amplitude=0.15, frequency=0.01)
-disturbance = signalGenerator(amplitude=1.0)
+reference = signalGenerator(amplitude=0.25)
 animation = bbForceAnimation(limits=0.7, multfigs=True)
 
 # add subplots
@@ -45,13 +44,13 @@ while t < P.t_end:
 
     while t < t_next_plot:
 
-        zr = 0.25 + reference.square(t)
+        zr = 0.25 + reference.step(t)
         F = control.update(zr, ballbeam.state)
         y = ballbeam.update(F)  # Propagate the dynamics
 
         sim_times.append(t)
         zs.append(y[0][0])
-        thetas.append(y[2][0])
+        thetas.append(np.rad2deg(y[2][0]))
         fs.append(F)
         zrs.append(zr)
 
