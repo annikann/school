@@ -56,7 +56,7 @@ class bbAnimation:
         # Create rectangle on first call, update on subsequent calls
         if self.flag_init is True:
             # Create the rectangle patch and append its handle to the list
-            self.handle.append(mpatches.Rectangle((0,0), P.l, 0.005, theta, fc='black', ec='black'))
+            self.handle.append(mpatches.Rectangle((0,0), P.l, 0.0055, theta, fc='black', ec='black'))
             # Add the path to the axis
             self.ax.add_patch(self.handle[1])
         else: self.handle[1].set_angle(np.rad2deg(theta))

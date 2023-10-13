@@ -7,7 +7,6 @@ class bbController:
         self.m2 = P.m2
         self.l = P.l
         self.Fmax = P.Fmax
-        self.thetamax = 30*np.pi/180
 
         self.kPth = 1.825
         self.kDth = 1.173
@@ -22,10 +21,9 @@ class bbController:
         thetadot = state[3][0]
 
         # Equilibrium force
-        feq = (P.m1*P.g*z + P.m2*P.g*(0.5*P.l))/P.l
+        feq = (P.m1*P.g*z / self.l) + (P.m2*P.g / 2)
         thetar = self.kPz*(zr - z) - self.kDz*zdot
         fc = self.kPth*(thetar - theta) - self.kDth*thetadot
-
         f = feq + fc
         F = self.saturate(f, self.Fmax)
         return F

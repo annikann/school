@@ -11,7 +11,7 @@ class bbForceAnimation:
          # set up plot
         self.fig = plt.figure(1)
         if multfigs == True:
-            spec = gs.GridSpec(1, 1, left=0., bottom=0.35, right=0.6, top=0.8)
+            spec = gs.GridSpec(1, 1, left=0., bottom=0.35, right=0.5, top=0.8)
             self.ax = plt.subplot(spec[0])
         else:
             self.ax = self.fig.add_subplot(1, 1, 1)
@@ -34,7 +34,7 @@ class bbForceAnimation:
         # Set axes and limits
         self.ax.set_aspect("equal")
         self.ax.set_ylim(top=self.limits*(3/7), bottom=-self.limits*(3/7))
-        self.ax.set_xlim(left=-0.2, right=self.limits)
+        self.ax.set_xlim(left=-0.1, right=self.limits)
         # Set initialization flag to False after first call
         if self.flag_init == True:
             self.flag_init = False
