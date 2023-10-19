@@ -78,7 +78,30 @@ class mavDynamics:
         rdot = np.array([self.gamma7*p*q - self.gamma1*q*r]) + np.array([self.gamma4*l + self.gamma8*n])
 
         # Build and return xdot
-        xdot = np.array([[pndot[0]], [pedot[0]], [pddot[0]], [udot[0]], [vdot[0]], [wdot[0]], [phidot[0]], [thetadot[0]], [psidot[0]], [pdot[0]], [qdot[0]], [rdot[0]]])
+        # xdot = np.array([[pndot[0]], 
+        #                  [pedot[0]], 
+        #                  [pddot[0]], 
+        #                  [udot[0]], 
+        #                  [vdot[0]], 
+        #                  [wdot[0]], 
+        #                  [phidot[0]], 
+        #                  [thetadot[0]], 
+        #                  [psidot[0]], 
+        #                  [pdot[0]], 
+        #                  [qdot[0]], 
+        #                  [rdot[0]]], dtype=float)
+        xdot = np.array([[pndot[0][0]], 
+                         [pedot[0][0]], 
+                         [pddot[0][0]], 
+                         [udot[0][0]], 
+                         [vdot[0][0]], 
+                         [wdot[0][0]], 
+                         [phidot[0][0]], 
+                         [thetadot[0][0]], 
+                         [psidot[0][0]], 
+                         [pdot[0][0]], 
+                         [qdot[0][0]], 
+                         [rdot[0][0]]], dtype=float)
         return xdot   
 
     def h(self):
@@ -94,7 +117,7 @@ class mavDynamics:
         p = self.state[9][0]
         q = self.state[10][0]
         r = self.state[11][0]
-        y = np.array([[pn], [pe], [pd], [u], [v], [w], [phi], [theta], [psi], [p], [q], [r]])
+        y = np.array([[pn], [pe], [pd], [u], [v], [w], [phi], [theta], [psi], [p], [q], [r]], dtype=float)
         return y
 
     def rk4_step(self, fx, fy, fz, l, m, n):

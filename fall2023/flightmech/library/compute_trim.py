@@ -114,7 +114,7 @@ class ComputeTrim:
                            [0.],
                            [p],
                            [q],
-                           [r]])
+                           [r]], dtype=float)
 
         C_L = C_L_0 + C_L_alpha*alpha
         C_D = C_D_0 + C_D_alpha*alpha
@@ -138,8 +138,8 @@ class ComputeTrim:
         
         temp_3=np.matmul(temp_1,temp_2)
         
-        d_a = temp_3[0]
-        d_r = temp_3[1]
+        d_a = temp_3[0][0]
+        d_r = temp_3[1][0]
         
         u_trim = np.array([[d_e],
                            [d_t],
@@ -159,18 +159,18 @@ class ComputeTrim:
         #Y=0
 
         #compute X_dot_star
-        x_dot = np.array([[0],
-                        [0],
+        x_dot = np.array([[0.],
+                        [0.],
                         [-Va*sin(Y)], # I am using Pd_dot not hdot..that is why there is a sign change
-                        [0],
-                        [0],
-                        [0],
-                        [0],
-                        [0],
+                        [0.],
+                        [0.],
+                        [0.],
+                        [0.],
+                        [0.],
                         [Va/R],
-                        [0],
-                        [0],
-                        [0]])
+                        [0.],
+                        [0.],
+                        [0.]], dtype=float)
         
         #compute trimmed states
         x_trim, u_trim = self.compute_trim_states_input(x,Va,Y,R)
@@ -189,8 +189,8 @@ class ComputeTrim:
         #trimmed_inputs=np.array([d_e,d_t,d_a,d_r])
 
         states_dot = self.mav.f(x_trim, fx, fy, fz, l, m, n) # 
-        print('xdot:', x_dot.shape)
-        print('statesdot:', states_dot.shape)
+        # print('xdot:', x_dot.shape)
+        # print('statesdot:', states_dot.shape)
 
         J = np.linalg.norm(x_dot - states_dot)**2
 
