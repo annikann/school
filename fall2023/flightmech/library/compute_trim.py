@@ -127,16 +127,14 @@ class ComputeTrim:
         C_Z_q = -C_D_q*sin(alpha) - C_L_q*cos(alpha)
         C_Z_delta_e = -C_D_delta_e*sin(alpha) - C_L_delta_e*cos(alpha)
         d_e = (((jxz*(p**2 - r**2) + (jx - jz)*p*r)/(0.5*rho*(Va**2)*c*S_wing)) - C_m_0 - C_m_alpha*alpha - C_m_q*((c*q)/(2*Va)))/C_m_delta_e
-        
         d_t = np.sqrt(((2*mass*(-r*v + q*w + gravity*sin(theta)) - rho*(Va**2)*S_wing*(C_X + C_X_q*((c*q)/(2*Va)) + \
                         C_X_delta_e*d_e))/(rho*S_prop*C_prop*k_motor**2)) + ((Va**2)/(k_motor**2)))
-        
         temp_1 = np.linalg.inv(np.array([[C_ell_delta_a, C_ell_delta_r],
                                          [C_n_delta_a, C_n_delta_r]]))
         temp_2 = np.array([[((-gamma1*p*q+gamma2*q*r)/(0.5*rho*(Va**2)*S_wing*b)) - C_ell_0 - C_ell_beta*beta - C_ell_p*((b*p)/(2*Va)) - C_ell_r*((b*r)/(2*Va))],
                         [((-gamma7*p*q+gamma1*q*r)/(0.5*rho*(Va**2)*S_wing*b)) - C_n_0 - C_n_beta*beta - C_n_p*((b*p)/(2*Va)) - C_n_r*((b*r)/(2*Va))]])
         
-        temp_3=np.matmul(temp_1,temp_2)
+        temp_3=np.matmul(temp_1, temp_2)
         
         d_a = temp_3[0][0]
         d_r = temp_3[1][0]
@@ -144,22 +142,14 @@ class ComputeTrim:
         u_trim = np.array([[d_e],
                            [d_t],
                            [d_a],
-                           [d_r]])
-    # print("Trimmed [a*,B*,phi*]:")
-    # print(x_trim)
+                           [d_r]], dtype=float)
+
         return (x_trim, u_trim)
     
     def compute_trim_cost(self, x, Va, Y, R, alpha, beta):
-        #inputs
-        # alpha = x[0]
-        # beta = x[1]
-
-        #Va=35
-        #R=99999999999
-        #Y=0
 
         #compute X_dot_star
-        x_dot = np.array([[0.],
+        x_dot_star = np.array([[0.],
                         [0.],
                         [-Va*sin(Y)], # I am using Pd_dot not hdot..that is why there is a sign change
                         [0.],
@@ -173,25 +163,17 @@ class ComputeTrim:
                         [0.]], dtype=float)
         
         #compute trimmed states
-        x_trim, u_trim = self.compute_trim_states_input(x,Va,Y,R)
+        x_trim, u_trim = self.compute_trim_states_input(x, Va, Y, R)
         d_e = u_trim[0]
         d_t = u_trim[1]
         d_a = u_trim[2]
         d_r = u_trim[3]
         
-        #f_x, f_y, f_z, tau_phi, tau_theta, tau_psi=forces_moments(x_trim, d_e, d_a, d_r, d_t)
         fx, fy, fz = self.forces_mom.forces(x_trim, alpha, beta, d_a, d_e, d_r, d_t, Va)
         l, m, n = self.forces_mom.moments(x_trim, alpha, beta, d_a, d_e, d_r, d_t, Va)
-        #print('fx=',f_x,'fy=', f_y, 'fz=', f_z, 'l=',tau_phi, 'm=',tau_theta, 'n=',tau_psi)
-        # U = np.array(fx, fy, fz, l, m, n)
-        #U=np.array([f_x,f_y,f_z,tau_phi,tau_theta,tau_psi])
         
-        #trimmed_inputs=np.array([d_e,d_t,d_a,d_r])
-
         states_dot = self.mav.f(x_trim, fx, fy, fz, l, m, n) # 
-        # print('xdot:', x_dot.shape)
-        # print('statesdot:', states_dot.shape)
 
-        J = np.linalg.norm(x_dot - states_dot)**2
+        J = np.linalg.norm(x_dot_star - states_dot)**2
 
         return J

@@ -17,7 +17,7 @@ from library.wind import wind
 import library.aerosonde_parameters as P
 
 state = P.states0
-MAV_anim = MAV_animation()
+MAV_anim = MAV_animation(limits=10, scale=0.25, multfigs=True)
 MAV = mavDynamics()
 Trim = ComputeTrim()
 Aero = mavAero()
@@ -26,8 +26,8 @@ Wind = wind(Vs)
 
 # initialize the simulation and signal generator
 sim_time = P.start_time
-forces = signalGenerator(1000., 1)
-moments = signalGenerator(15., 1)
+# forces = signalGenerator(1000., 1)
+# moments = signalGenerator(15., 1)
 
 print("Press Q to exit simulation")
 pn = state[0][0]
@@ -66,7 +66,7 @@ ps = []; qs = []; rs = []
 
 Va = 35.
 Y = 0.
-R = float('inf')
+R = np.inf
 
 sim_time = P.start_time
 while sim_time < P.end_time:
