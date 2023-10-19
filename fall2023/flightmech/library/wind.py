@@ -54,6 +54,4 @@ class wind():
         alpha = np.arctan(wr/ur)
         beta = np.arcsin(vr/Va)
 
-        print(ur, vr, wr)
-
         return Va, alpha, beta

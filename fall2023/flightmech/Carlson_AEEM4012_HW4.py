@@ -5,6 +5,7 @@
 import sys
 sys.path.append('/Users/annikacarlson/Documents/flightmech/library')
 import numpy as np
+import matplotlib.pyplot as plt
 from numpy import cos, sin, tan
 import scipy.linalg as linalg
 from library.signalGenerator import signalGenerator
@@ -67,16 +68,19 @@ ps = []; qs = []; rs = []
 Va = 35.
 Y = 0.
 R = np.inf
+Va_actual = np.sqrt(u**2 + v**2 + w**2)
+deltat = 0.5
 
 sim_time = P.start_time
 while sim_time < P.end_time:
 
     # call simulation
-    Va, alpha, beta = Wind.windout(state, Va, sim_time)
+    Va_actual, alpha, beta = Wind.windout(state, Va_actual, sim_time)
     x_trim, u_trim = Trim.compute_trim(Va, Y, R, alpha, beta)
+    print(u_trim)
     deltae, deltat, deltaa, deltar = u_trim.flatten()
-    fx, fy, fz = Aero.forces(state, alpha, beta, deltaa, deltae, deltar, deltat, Va)
-    l, m, n = Aero.moments(state, alpha, beta, deltaa, deltae, deltar, deltat, Va)
+    fx, fy, fz = Aero.forces(state, alpha, beta, deltaa, deltae, deltar, deltat, Va_actual)
+    l, m, n = Aero.moments(state, alpha, beta, deltaa, deltae, deltar, deltat, Va_actual)
     y = MAV.update(fx, fy, fz, l, m, n)
 
     MAV_anim.update(y[0][0], y[1][0], y[2][0], y[6][0], y[7][0], y[8][0])
@@ -125,6 +129,7 @@ while sim_time < P.end_time:
 
     # -------increment time-------------
     sim_time += P.ts_simulation
+    plt.pause(0.001)
 
     # end simulation
     if key.is_pressed("q"): break

@@ -24,7 +24,7 @@ class ComputeTrim:
         
     def compute_trim(self, Va, Y, R, alpha, beta):
         x0 = np.array([0, 0, 0])
-        res = minimize(lambda x: self.compute_trim_cost(x, Va, Y, R, alpha, beta), x0, method='nelder-mead', options={'xatol': 1e-8, 'disp': True})
+        res = minimize(lambda x: self.compute_trim_cost(x, Va, Y, R, alpha, beta), x0, method='nelder-mead', options={'xatol': 1e-8, 'disp': False})
         x_trim, u_trim = self.compute_trim_states_input(res.x, Va, Y, R)
         return (x_trim, u_trim)
 
