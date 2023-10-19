@@ -11,11 +11,18 @@ from library.signalGenerator import signalGenerator
 import keyboard as key
 from library.MAV_animation import MAV_animation
 from library.mavDynamics import mavDynamics
+from library.compute_trim import ComputeTrim
+from library.mavAero import mavAero
+from library.wind import wind
 import library.aerosonde_parameters as P
 
 state = P.states0
+MAV_anim = MAV_animation()
 MAV = mavDynamics()
-MAV_anim = MAV_animation(state, scale=5, multfigs=True)
+Trim = ComputeTrim()
+Aero = mavAero()
+Vs = np.array([[0.],[0.],[0.]])
+Wind = wind(Vs)
 
 # initialize the simulation and signal generator
 sim_time = P.start_time
@@ -57,37 +64,21 @@ us = []; vs = []; ws = []
 phis = []; thetas = []; psis = []
 ps = []; qs = []; rs = []
 
+Va = 35.
+Y = 0.
+R = float('inf')
+
 sim_time = P.start_time
 while sim_time < P.end_time:
-    # forces
-    if sim_time <= 1:
-        fx = 0.
-        fy = 0.
-        fz = 0.
-        l = 0.
-        m = 0.
-        n = 0.
-    elif sim_time <= 2:
-        fx = forces.sin(sim_time)
-    elif sim_time <= 3:
-        fx = 0.
-        fy = forces.sin(sim_time)
-    elif sim_time <= 4:
-        fy = 0.
-        fz = forces.sin(sim_time)
-    # moments
-    elif sim_time <= 5:
-        fz = 0.
-        l = moments.sin(sim_time)
-    elif sim_time <= 6:
-        l = 0.
-        m = moments.sin(sim_time)
-    elif sim_time <= 7:
-        m = 0.
-        n = moments.sin(sim_time)
 
     # call simulation
+    Va, alpha, beta = Wind.windout(state, Va, sim_time)
+    x_trim, u_trim = Trim.compute_trim(Va, Y, R, alpha, beta)
+    deltae, deltat, deltaa, deltar = u_trim.flatten()
+    fx, fy, fz = Aero.forces(state, alpha, beta, deltaa, deltae, deltar, deltat, Va)
+    l, m, n = Aero.moments(state, alpha, beta, deltaa, deltae, deltar, deltat, Va)
     y = MAV.update(fx, fy, fz, l, m, n)
+
     MAV_anim.update(y[0][0], y[1][0], y[2][0], y[6][0], y[7][0], y[8][0])
 
     # make lists for plotting

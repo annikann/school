@@ -78,7 +78,7 @@ class mavDynamics:
         rdot = np.array([self.gamma7*p*q - self.gamma1*q*r]) + np.array([self.gamma4*l + self.gamma8*n])
 
         # Build and return xdot
-        xdot = np.array([pndot[0], pedot[0], pddot[0], udot[0], vdot[0], wdot[0], phidot[0], thetadot[0], psidot[0], pdot[0], qdot[0], rdot[0]])
+        xdot = np.array([[pndot[0]], [pedot[0]], [pddot[0]], [udot[0]], [vdot[0]], [wdot[0]], [phidot[0]], [thetadot[0]], [psidot[0]], [pdot[0]], [qdot[0]], [rdot[0]]])
         return xdot   
 
     def h(self):

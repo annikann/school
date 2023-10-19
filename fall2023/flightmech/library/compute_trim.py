@@ -9,7 +9,6 @@ from library.rotations import Quaternion2Euler, Quaternion2Rotation, Euler2Rotat
 from numpy import cos, sin, tan
 import control
 from control.matlab import *
-import library.simulation_parameters as SIM
 from library.mavDynamics import mavDynamics
 from library.mavAero import mavAero
 from scipy.optimize import minimize
@@ -19,13 +18,13 @@ class ComputeTrim:
 
     def __init__(self):
         self.P = P
-        self.Ts = SIM.ts_simulation
+        self.Ts = P.ts_simulation
         self.forces_mom = mavAero()
-        self.mav = mavDynamics(SIM.ts_simulation, P.state0)
+        self.mav = mavDynamics()
         
-    def compute_trim(self, Va, Y, R):
+    def compute_trim(self, Va, Y, R, alpha, beta):
         x0 = np.array([0, 0, 0])
-        res = minimize(lambda x: self.compute_trim_cost(x, Va, Y, R), x0, method='nelder-mead', options={'xatol': 1e-8, 'disp': True})
+        res = minimize(lambda x: self.compute_trim_cost(x, Va, Y, R, alpha, beta), x0, method='nelder-mead', options={'xatol': 1e-8, 'disp': True})
         x_trim, u_trim = self.compute_trim_states_input(res.x, Va, Y, R)
         return (x_trim, u_trim)
 
@@ -104,7 +103,18 @@ class ComputeTrim:
         q = (Va/R)*sin(phi)*cos(theta)
         r = (Va/R)*cos(phi)*cos(theta)
         
-        x_trim = np.array([0,0,0,u,v,w,phi,theta,0,p,q,r])
+        x_trim = np.array([[0.],
+                           [0.],
+                           [0.],
+                           [u],
+                           [v],
+                           [w],
+                           [phi],
+                           [theta],
+                           [0.],
+                           [p],
+                           [q],
+                           [r]])
 
         C_L = C_L_0 + C_L_alpha*alpha
         C_D = C_D_0 + C_D_alpha*alpha
@@ -131,17 +141,18 @@ class ComputeTrim:
         d_a = temp_3[0]
         d_r = temp_3[1]
         
-        u_trim = np.array([d_e,d_t,d_a,d_r])
+        u_trim = np.array([[d_e],
+                           [d_t],
+                           [d_a],
+                           [d_r]])
     # print("Trimmed [a*,B*,phi*]:")
     # print(x_trim)
         return (x_trim, u_trim)
     
-    def compute_trim_cost(self, x, Va, Y, R):
-  
-    #inputs
-        alpha = x[0]
-        beta = x[1]
-        phi = x[2]
+    def compute_trim_cost(self, x, Va, Y, R, alpha, beta):
+        #inputs
+        # alpha = x[0]
+        # beta = x[1]
 
         #Va=35
         #R=99999999999
@@ -169,14 +180,17 @@ class ComputeTrim:
         d_r = u_trim[3]
         
         #f_x, f_y, f_z, tau_phi, tau_theta, tau_psi=forces_moments(x_trim, d_e, d_a, d_r, d_t)
-        f_m = self.forces_mom.compute(x_trim,u_trim)
+        fx, fy, fz = self.forces_mom.forces(x_trim, alpha, beta, d_a, d_e, d_r, d_t, Va)
+        l, m, n = self.forces_mom.moments(x_trim, alpha, beta, d_a, d_e, d_r, d_t, Va)
         #print('fx=',f_x,'fy=', f_y, 'fz=', f_z, 'l=',tau_phi, 'm=',tau_theta, 'n=',tau_psi)
-        U = f_m
+        # U = np.array(fx, fy, fz, l, m, n)
         #U=np.array([f_x,f_y,f_z,tau_phi,tau_theta,tau_psi])
         
         #trimmed_inputs=np.array([d_e,d_t,d_a,d_r])
 
-        states_dot = self.mav._derivatives(x_trim, f_m) # 
+        states_dot = self.mav.f(x_trim, fx, fy, fz, l, m, n) # 
+        print('xdot:', x_dot.shape)
+        print('statesdot:', states_dot.shape)
 
         J = np.linalg.norm(x_dot - states_dot)**2
 
