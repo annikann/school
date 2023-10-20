@@ -99,27 +99,34 @@ class ComputeGains:
         a_beta2 = (self.rho * Va_trim * self.S_wing)/(2 * self.M) * self.C_Y_delta_r
 
         # Calculate transfer functions
-        T_phi_delta_a = tf([a_phi2], [1, a_phi1, 0])
-        T_chi_phi = tf([self.gravity/Va_trim], [1, 0])
-        T_theta_delta_e = tf([a_theta3], [1, a_theta1, a_theta2])
-        T_h_theta = tf([Va_trim], [1, 0])
-        T_h_Va = tf([theta_trim], [1, 0])
-        T_Va_delta_t = tf([a_V2], [1, a_V1])
-        T_Va_theta = tf([-a_V3], [1, a_V1])
-        T_beta_delta_r = tf([a_beta2], [1, a_beta1])
+        T_phi_delta_a = tf([a_phi2[0]], [1, a_phi1[0], 0])
+        T_chi_phi = tf([self.gravity/Va_trim[0]], [1, 0])
+        T_theta_delta_e = tf([a_theta3[0]], [1, a_theta1[0], a_theta2[0]])
+        T_h_theta = tf([Va_trim[0]], [1, 0])
+        T_h_Va = tf([theta_trim[0]], [1, 0])
+        T_Va_delta_t = tf([a_V2[0]], [1, a_V1[0]])
+        T_Va_theta = tf([-1*a_V3[0]], [1, a_V1[0]])
+        T_beta_delta_r = tf([a_beta2[0]], [1, a_beta1[0]])
 
-        print('~~~~~~~ Open Loop Transfer Functions ~~~~~~~')
-        print('T_phi_delta_a = ', T_phi_delta_a)
-        print('T_chi_phi = ', T_chi_phi)
-        print('T_theta_delta_e = ', T_theta_delta_e)
-        print('T_h_theta = ', T_h_theta)
-        print('T_beta_delta_r = ', T_beta_delta_r)
-        print('T_Va_delta_t = ', T_Va_delta_t)
-        print('T_Va_theta = ', T_Va_theta)
-        print('T_h_Va = ', T_h_Va)
+        print('\n~~~~~~~ Open Loop Transfer Functions ~~~~~~~\n')
+        print('T_phi_delta_a = \n', T_phi_delta_a)
+        print('~~~~~~~~~~~~~~~~~~~~~~~~\n')
+        print('T_chi_phi = \n', T_chi_phi)
+        print('~~~~~~~~~~~~~~~~~~~~~~~~\n')
+        print('T_theta_delta_e = \n', T_theta_delta_e)
+        print('~~~~~~~~~~~~~~~~~~~~~~~~\n')
+        print('T_h_theta = \n', T_h_theta)
+        print('~~~~~~~~~~~~~~~~~~~~~~~~\n')
+        print('T_beta_delta_r = \n', T_beta_delta_r)
+        print('~~~~~~~~~~~~~~~~~~~~~~~~\n')
+        print('T_Va_delta_t = \n', T_Va_delta_t)
+        print('~~~~~~~~~~~~~~~~~~~~~~~~\n')
+        print('T_Va_theta = \n', T_Va_theta)
+        print('~~~~~~~~~~~~~~~~~~~~~~~~\n')
+        print('T_h_Va = \n', T_h_Va)
+        print('~~~~~~~~~~~~~~~~~~~~~~~~\n')
 
         return (T_phi_delta_a, T_chi_phi, T_theta_delta_e, T_h_theta, T_h_Va, T_Va_delta_t, T_Va_theta, T_Va_theta, T_beta_delta_r)
-
 
     def statespace(self, x_trim, u_trim):
 
@@ -222,9 +229,9 @@ class ComputeGains:
         M_q = (P.rho * Va * P.c ** 2 * P.S_wing * P.C_m_q) / (4 * P.jy)
         M_delta_e = (P.rho * (Va ** 2) * P.S_wing * P.c * P.C_m_delta_e) / (2 * P.jy)
 
-        Alat = np.array([[Y_v, Y_p, Y_r, self.gravity*np.cos(theta)*np.cos(phi), 0],
-                      [L_v, L_p, L_r, 0, 0], 
-                      [N_v, N_p, N_r, 0, 0],
+        Alat = np.array([[Y_v[0], Y_p, Y_r, self.gravity*np.cos(theta)*np.cos(phi), 0],
+                      [L_v[0], L_p, L_r, 0, 0], 
+                      [N_v[0], N_p, N_r, 0, 0],
                       [0, 1, np.cos(phi)*np.tan(theta), q*np.cos(phi)*np.tan(theta)-r*np.sin(phi)*np.tan(theta), 0],
                       [0, 0, np.cos(phi)*(1/np.cos(theta)), p*np.cos(phi)*(1/np.cos(theta)) - r*np.sin(phi)*(1/np.cos(theta)), 0]])
         Blat = np.array([[Y_delta_a, Y_delta_r], 
@@ -233,27 +240,27 @@ class ComputeGains:
                          [0, 0], 
                          [0, 0]])
 
-        Along = np.array([[X_u, X_w, X_q, -self.gravity*np.cos(theta), 0],
-                          [Z_u, Z_w, Z_q, -self.gravity*np.sin(theta), 0],
-                          [M_u, M_w, M_q, 0, 0],
+        Along = np.array([[X_u[0], X_w[0], X_q, -self.gravity*np.cos(theta), 0],
+                          [Z_u[0], Z_w[0], Z_q, -self.gravity*np.sin(theta), 0],
+                          [M_u[0], M_w[0], M_q, 0, 0],
                           [0, 0, 1, 0, 0],
                           [np.sin(theta), -np.cos(theta), 0, u*np.cos(theta) + w*np.sin(theta), 0]])
 
-        Blong = np.array([[X_delta_e, X_delta_t], 
+        Blong = np.array([[X_delta_e, X_delta_t[0]], 
                           [Z_delta_e, 0], 
                           [M_delta_e, 0], 
                           [0, 0], 
                           [0, 0]])
 
-        print('Lateral A matrix: ', Alat)
-        print('Lateral B matrix: ', Blat)
-        print('Longitudinal A matrix: ', Along)
-        print('Longitudinal B matrix: ', Blong)
+        print('\nLateral A matrix: \n', Alat)
+        print('\nLateral B matrix: \n', Blat)
+        print('\nLongitudinal A matrix: \n', Along)
+        print('\nLongitudinal B matrix: \n', Blong, '\n')
 
         elatvalue, elatvect = np.linalg.eig(Alat)
         elongvalue, elongvect = np.linalg.eig(Along)
-        print('Lateral eigenvalues: ', elatvalue)
-        print('Longitudinal eigenvalues: ', elongvalue)
+        print('\nLateral eigenvalues: ', elatvalue)
+        print('\nLongitudinal eigenvalues: ', elongvalue)
 
         def categorize_eigenvalues(eigenvalues):
             modes = []
@@ -288,11 +295,11 @@ class ComputeGains:
         alat_modes = categorize_eigenvalues(elatvalue)
 
         # Print the modes associated with Alon and Alat
-        print("Modes associated with Alon eigenvalues:")
+        print("\n~~~~~~~~ Alon Modes ~~~~~~~~")
         for i, mode in enumerate(alon_modes):
             print(f"Eigenvalue {i + 1}: {mode}")
 
-        print("\nModes associated with Alat eigenvalues:")
+        print("\n~~~~~~~~ Alat Modes ~~~~~~~~")
         for i, mode in enumerate(alat_modes):
             print(f"Eigenvalue {i + 1}: {mode}")
 

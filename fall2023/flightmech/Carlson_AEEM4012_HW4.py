@@ -65,12 +65,12 @@ beta = 0
 
 x_trim, u_trim = Trim.compute_trim(Va, Y, R)
 deltae, deltat, deltaa, deltar = u_trim.flatten()
-print("~~~~~~~ Trim Conditions ~~~~~~~")
+print("\n~~~~~~~ Trim Conditions ~~~~~~~")
 print(f"Elevator: {np.rad2deg(deltae):.2f} deg")
 print(f"Throttle: {deltat*100:.2f} %")
 print(f"Aileron:  {np.rad2deg(deltaa):.2f} deg")
 print(f"Rudder:   {np.rad2deg(deltar):.2f} deg")
-print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
 
 # Compute transfer functions and state spaces
 T_phi_delta_a, T_chi_phi, T_theta_delta_e, T_h_theta, T_h_Va, T_Va_delta_t, T_Va_theta, T_Va_theta, T_beta_delta_r = gains.compute_tfs(x_trim, u_trim)
@@ -95,7 +95,7 @@ MAV.state = np.ndarray.copy(state0)
 
 Va_actual = np.sqrt(u**2 + v**2 + w**2)
 
-print("Press Q to exit simulation")
+print("\nPress Q to exit simulation")
 sim_time = P.start_time
 while sim_time < P.end_time:
     t_next_plot = sim_time + P.ts_plotting
