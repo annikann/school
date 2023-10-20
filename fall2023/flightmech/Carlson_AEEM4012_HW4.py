@@ -77,11 +77,12 @@ beta = 0
 
 x_trim, u_trim = Trim.compute_trim(Va, Y, R)
 deltae, deltat, deltaa, deltar = u_trim.flatten()
-print("--- Trim Conditions ---")
-print(f"E: {np.rad2deg(deltae):.2f} deg")
-print(f"T: {deltat*100:.2f} %")
-print(f"A: {np.rad2deg(deltaa):.2f} deg")
-print(f"R: {np.rad2deg(deltar):.2f} deg")
+print("~~~~~~~ Trim Conditions ~~~~~~~")
+print(f"Elevator: {np.rad2deg(deltae):.2f} deg")
+print(f"Throttle: {deltat*100:.2f} %")
+print(f"Aileron:  {np.rad2deg(deltaa):.2f} deg")
+print(f"Rudder:   {np.rad2deg(deltar):.2f} deg")
+print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 pn = 0
 pe = 0
