@@ -58,8 +58,8 @@ ps = []; qs = []; rs = []
 deltaas = []; deltaes = []; deltars = []; deltats = []
 
 Va = 35.
-Y = np.deg2rad(10)
-R = 100
+Y = np.deg2rad(0)
+R = np.inf
 alpha = 0
 beta = 0
 

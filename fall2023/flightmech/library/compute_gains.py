@@ -1,6 +1,6 @@
 import numpy as np
-from control.matlab import *
-from library import aerosonde_parameters as P
+from control.matlab import tf
+import library.aerosonde_parameters as  P
 
 class ComputeGains:
     def __init__(self):
@@ -73,8 +73,8 @@ class ComputeGains:
 
     def compute_tfs(self, x_trim, u_trim):
 
-        Va_trim = np.sqrt(x_trim[3] ** 2 + x_trim[4] ** 2 + x_trim[5] ** 2)
-        alpha_trim = np.arctan(x_trim[5] / x_trim[3])
+        Va_trim = np.sqrt(x_trim[3]**2 + x_trim[4]**2 + x_trim[5]**2)
+        alpha_trim = np.arctan(x_trim[5]/x_trim[3])
         beta_trim = np.arctan(x_trim[4]/Va_trim)
         theta_trim = x_trim[7]
         gamma = self.jx * self.jz - self.jxz ** 2
@@ -90,7 +90,8 @@ class ComputeGains:
         a_theta2 = -(self.rho * Va_trim**2 * self.c * self.S_wing)/(2 * self.jy) * self.C_m_alpha
         a_theta3 = (self.rho * Va_trim**2 * self.c * self.S_wing)/(2 * self.jy) * self.C_m_delta_e
 
-        a_V1 = ((self.rho * Va_trim * self.S_wing)/self.M) * (self.C_D_0 + (self.C_D_alpha * alpha_trim) + (self.C_D_delta_e * u_trim[0])) + (self.rho * self.S_prop)/(self.M) * self.C_prop * Va_trim
+        a_V1 = ((self.rho * Va_trim * self.S_wing)/self.M) * (self.C_D_0 + (self.C_D_alpha * alpha_trim) \
+                + (self.C_D_delta_e * u_trim[0])) + (self.rho * self.S_prop)/(self.M) * self.C_prop * Va_trim
         a_V2 = (self.rho * self.S_prop)/(self.M) * self.C_prop * self.k_motor**2 * u_trim[3]
         a_V3 = self.gravity * np.cos(theta_trim - alpha_trim)
 
@@ -99,8 +100,8 @@ class ComputeGains:
 
         # Calculate transfer functions
         T_phi_delta_a = tf([a_phi2], [1, a_phi1, 0])
-        T_chi_phi = tf([self.gravity / Va_trim], [1, 0])
-        T_theta_delta_e = tf(a_theta3, [1, a_theta1, a_theta2])
+        T_chi_phi = tf([self.gravity/Va_trim], [1, 0])
+        T_theta_delta_e = tf([a_theta3], [1, a_theta1, a_theta2])
         T_h_theta = tf([Va_trim], [1, 0])
         T_h_Va = tf([theta_trim], [1, 0])
         T_Va_delta_t = tf([a_V2], [1, a_V1])
@@ -108,14 +109,14 @@ class ComputeGains:
         T_beta_delta_r = tf([a_beta2], [1, a_beta1])
 
         print('~~~~~~~ Open Loop Transfer Functions ~~~~~~~')
-        print('T_phi_delta_a=', T_phi_delta_a)
-        print('T_chi_phi=', T_chi_phi)
-        print('T_theta_delta_e=', T_theta_delta_e)
-        print('T_h_theta=', T_h_theta)
-        print('T_beta_delta_r =', T_beta_delta_r)
-        print('T_Va_delta_t=', T_Va_delta_t)
-        print('T_Va_theta=', T_Va_theta)
-        print('T_h_Va=', T_h_Va)
+        print('T_phi_delta_a = ', T_phi_delta_a)
+        print('T_chi_phi = ', T_chi_phi)
+        print('T_theta_delta_e = ', T_theta_delta_e)
+        print('T_h_theta = ', T_h_theta)
+        print('T_beta_delta_r = ', T_beta_delta_r)
+        print('T_Va_delta_t = ', T_Va_delta_t)
+        print('T_Va_theta = ', T_Va_theta)
+        print('T_h_Va = ', T_h_Va)
 
         return (T_phi_delta_a, T_chi_phi, T_theta_delta_e, T_h_theta, T_h_Va, T_Va_delta_t, T_Va_theta, T_Va_theta, T_beta_delta_r)
 
