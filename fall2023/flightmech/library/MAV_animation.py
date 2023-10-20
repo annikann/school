@@ -1,7 +1,7 @@
-"""
-Class for plotting Assignment 1 Sample UAV
+# """
+# Class for plotting Assignment 1 Sample UAV
 
-"""
+# """
 
 import sys
 import os
@@ -21,7 +21,7 @@ class MAV_animation:
         self.flag_init = True
         self.fig = plt.figure(1)
         if multfigs == True:
-            self.ax = self.fig.add_subplot(2, 2, 1, projection="3d")
+            self.ax = self.fig.add_subplot(1, 3, 2, projection="3d")
         else:
             self.ax = self.fig.add_subplot(111, projection='3d')
         self.ax.set_xlim([-limits,limits])
@@ -49,9 +49,9 @@ class MAV_animation:
 
         UAV_verts = np.array([[fuse_l1, 0, 0],
                             [fuse_l2, fuse_w/2, fuse_h/2],
+                            [fuse_l2, fuse_w/2, -fuse_h/2],
                             [fuse_l2, -fuse_w/2, fuse_h/2],
                             [fuse_l2, -fuse_w/2, -fuse_h/2],
-                            [fuse_l2, fuse_w/2, -fuse_h/2],
                             [-fuse_l3, 0, 0],
                             [0, wing_w/2, 0],
                             [-wing_l, wing_w/2, 0],
@@ -62,7 +62,7 @@ class MAV_animation:
                             [-fuse_l3, -htail_w/2, 0],
                             [-(fuse_l3 - htail_l), -htail_w/2, 0],
                             [-(fuse_l3 - vtail_l), 0, 0],
-                            [-fuse_l3, 0, vtail_h]])
+                            [-fuse_l3, 0, -vtail_h]])
     
 
         pos_ned=np.array([pn, pe, pd])
@@ -93,7 +93,7 @@ class MAV_animation:
                             [vr[6], vr[8], vr[9]],
                             [vr[10], vr[11], vr[12]],
                             [vr[10], vr[12], vr[13]],
-                            [vr[5], vr[14], vr[15]]])*[1, 1, -1]
+                            [vr[5], vr[14], vr[15]]])*[1, 1, 1]
 
         return(UAV_faces)
 
@@ -111,11 +111,11 @@ class MAV_animation:
             self.UAV = self.ax.add_collection3d(poly)#
             self.ax.set_xlim([pe-self.lim, pe+self.lim])
             self.ax.set_ylim([pn-self.lim, pn+self.lim])
-            self.ax.set_zlim([pd-self.lim, pd+self.lim])
+            self.ax.set_zlim([-pd-self.lim, -pd+self.lim])
             plt.pause(0.01)
         else:
             self.UAV.set_verts(verts)
             self.ax.set_xlim([pe-self.lim, pe+self.lim])
             self.ax.set_ylim([pn-self.lim, pn+self.lim])
-            self.ax.set_zlim([pd-self.lim, pd+self.lim])
+            self.ax.set_zlim([-pd-self.lim, -pd+self.lim])
             plt.pause(0.01)

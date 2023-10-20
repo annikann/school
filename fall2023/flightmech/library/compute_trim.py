@@ -22,9 +22,9 @@ class ComputeTrim:
         self.forces_mom = mavAero()
         self.mav = mavDynamics()
         
-    def compute_trim(self, Va, Y, R, alpha, beta):
+    def compute_trim(self, Va, Y, R):
         x0 = np.array([0, 0, 0])
-        res = minimize(lambda x: self.compute_trim_cost(x, Va, Y, R, alpha, beta), x0, method='nelder-mead', options={'xatol': 1e-8, 'disp': False})
+        res = minimize(lambda x: self.compute_trim_cost(x, Va, Y, R), x0, method='nelder-mead', options={'xatol': 1e-8, 'disp': False})
         x_trim, u_trim = self.compute_trim_states_input(res.x, Va, Y, R)
         return (x_trim, u_trim)
 
@@ -146,7 +146,10 @@ class ComputeTrim:
 
         return (x_trim, u_trim)
     
-    def compute_trim_cost(self, x, Va, Y, R, alpha, beta):
+    def compute_trim_cost(self, x, Va, Y, R):
+
+        alpha = x[0]
+        beta = x[1]
 
         #compute X_dot_star
         x_dot_star = np.array([[0.],
@@ -164,10 +167,10 @@ class ComputeTrim:
         
         #compute trimmed states
         x_trim, u_trim = self.compute_trim_states_input(x, Va, Y, R)
-        d_e = u_trim[0]
-        d_t = u_trim[1]
-        d_a = u_trim[2]
-        d_r = u_trim[3]
+        d_e = u_trim[0][0]
+        d_t = u_trim[1][0]
+        d_a = u_trim[2][0]
+        d_r = u_trim[3][0]
         
         fx, fy, fz = self.forces_mom.forces(x_trim, alpha, beta, d_a, d_e, d_r, d_t, Va)
         l, m, n = self.forces_mom.moments(x_trim, alpha, beta, d_a, d_e, d_r, d_t, Va)
