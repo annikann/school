@@ -45,6 +45,7 @@ q = state[10][0]
 r = state[11][0]
 
 # create subplots
+throttle = plt.figure(1).add_subplot(3, 15, 1)
 force_plot = MAV_anim.fig.add_subplot(4, 2, 5)
 axpos = force_plot.get_position(); axpos.x0 += 0.0; axpos.y0 += 0.02; force_plot.set_position(axpos)
 moment_plot = MAV_anim.fig.add_subplot(4, 2, 7)
@@ -77,7 +78,6 @@ while sim_time < P.end_time:
     # call simulation
     Va_actual, alpha, beta = Wind.windout(state, Va_actual, sim_time)
     x_trim, u_trim = Trim.compute_trim(Va, Y, R, alpha, beta)
-    print(u_trim)
     deltae, deltat, deltaa, deltar = u_trim.flatten()
     fx, fy, fz = Aero.forces(state, alpha, beta, deltaa, deltae, deltar, deltat, Va_actual)
     l, m, n = Aero.moments(state, alpha, beta, deltaa, deltae, deltar, deltat, Va_actual)
@@ -120,16 +120,17 @@ while sim_time < P.end_time:
     angleRs_plot.plot(sim_times, rs, color='pink', label='r')
 
     # SET PLOT TITLES AND LABELS AS WELL
+    throttle.set_title('Throttle')
     force_plot.legend(loc='upper left'); force_plot.grid(); force_plot.set_title('Forces (N/m)')
     moment_plot.legend(loc='upper left'); moment_plot.grid(); moment_plot.set_title('Moments (Nm)')
     trans_plot.legend(loc="upper left"); trans_plot.grid(); trans_plot.set_title('Position (m)')
     vel_plot.legend(loc="upper left"); vel_plot.grid(); vel_plot.set_title('Velocity (m/s)')
-    angles_plot.legend(loc="upper left"); angles_plot.grid(); angles_plot.set_title('Angle (deg)')
+    angles_plot.legend(loc="upper left"); angles_plot.grid(); angles_plot.set_title('Angle (deg)'); angles_plot.set_ylim(-100,100)
     angleRs_plot.legend(loc="upper left"); angleRs_plot.grid(); angleRs_plot.set_title('Angle Rate (deg/s)')
 
     # -------increment time-------------
     sim_time += P.ts_simulation
-    plt.pause(0.001)
+    # plt.pause(0.0001)
 
     # end simulation
     if key.is_pressed("q"): break

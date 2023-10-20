@@ -107,10 +107,17 @@ class mavAero():
         prop = 0.5*self.rho*self.S_prop*self.C_prop*np.array([[(self.k_motor*deltat)**2 - Va**2],
                                                               [0],
                                                               [0]])
+    
         # Create forces matrix
         forces = grav + aero + prop
+        if forces.shape == (3, 3, 1):     # some weird thing is happening with array shapes at the start so this is my fix
+            forces = forces[0]
+            forces[0][0] = forces[0][0][0]
+        else:
+            forces = forces
+        fx, fy, fz = forces.flatten()
 
-        return forces
+        return fx, fy, fz
 
     def moments(self, state, alpha, beta, deltaa, deltae, deltar, deltat, Va):
         # Grab states
@@ -126,7 +133,13 @@ class mavAero():
                          [0],
                          [0]])
         
-        # Create moments matrix
+        # Create moments matrix 
         moments = aero + prop
+        if moments.shape == (3, 3, 1):    # some weird thing is happening with array shapes at the start so this is my fix
+            moments[0][0] = moments[0][0][0]
+            moments = moments[0]
+        else:
+            moments = moments
+        l, m, n = moments.flatten()
 
-        return moments
+        return l, m, n
