@@ -67,11 +67,13 @@ class mavAero():
     
     # Define all of the different constants
     def CDalpha(self, alpha):
-        return self.C_D_p + ((self.C_L_0 + self.C_L_alpha*alpha)**2)/(np.pi*self.e*self.AR)
+        # return self.C_D_p + ((self.C_L_0 + self.C_L_alpha*alpha)**2)/(np.pi*self.e*self.AR)
+        return (self.C_D_0 + self.C_D_alpha*alpha)
     
     def CLaplpha(self, alpha):
-        return (1 - self.sigma(alpha))*(self.C_L_0 + self.C_L_alpha*alpha) + \
-            self.sigma(alpha)*(2*np.sign(alpha)*(s(alpha)**2)*c(alpha))
+        # return (1 - self.sigma(alpha))*(self.C_L_0 + self.C_L_alpha*alpha) + \
+        #     self.sigma(alpha)*(2*np.sign(alpha)*(s(alpha)**2)*c(alpha))
+        return (self.C_L_0 + self.C_L_alpha*alpha)
 
     def Cx(self, alpha):
         return -self.CDalpha(alpha)*c(alpha) + self.CLaplpha(alpha)*s(alpha)

@@ -69,7 +69,7 @@ ps = []; qs = []; rs = []
 deltaas = []; deltaes = []; deltars = []; deltats = []
 
 Va = 35.
-Y = np.deg2rad(7)
+Y = np.deg2rad(0)
 R = np.inf
 # deltat = 0.5
 alpha = 0
