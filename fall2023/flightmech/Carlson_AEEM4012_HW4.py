@@ -28,19 +28,6 @@ Wind = wind(Vs)
 # initialize the simulation and signal generator
 sim_time = P.start_time
 
-# pn = state[0][0]
-# pe = state[1][0]
-# pd = state[2][0]
-# u = state[3][0]
-# v = state[4][0]
-# w = state[5][0]
-# phi = state[6][0]
-# theta = state[7][0]
-# psi = state[8][0]
-# p = state[9][0]
-# q = state[10][0]
-# r = state[11][0]
-
 # create subplots
 throttle = plt.figure(1).add_subplot(1, 60, 1)
 axpos = throttle.get_position(); axpos.x0 -= 0.05; axpos.x1 -= 0.03; throttle.set_position(axpos)
@@ -69,9 +56,8 @@ ps = []; qs = []; rs = []
 deltaas = []; deltaes = []; deltars = []; deltats = []
 
 Va = 35.
-Y = np.deg2rad(0)
-R = np.inf
-# deltat = 0.5
+Y = np.deg2rad(10)
+R = 100
 alpha = 0
 beta = 0
 
