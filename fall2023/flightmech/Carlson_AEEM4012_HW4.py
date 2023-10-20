@@ -15,6 +15,7 @@ from library.mavDynamics import mavDynamics
 from library.compute_trim import ComputeTrim
 from library.mavAero import mavAero
 from library.wind import wind
+from library.compute_gains import ComputeGains
 import library.aerosonde_parameters as P
 
 state = P.states0
@@ -24,6 +25,7 @@ Trim = ComputeTrim()
 Aero = mavAero()
 Vs = np.array([[0.],[0.],[0.]])
 Wind = wind(Vs)
+gains = ComputeGains()
 
 # initialize the simulation and signal generator
 sim_time = P.start_time
@@ -69,6 +71,10 @@ print(f"Throttle: {deltat*100:.2f} %")
 print(f"Aileron:  {np.rad2deg(deltaa):.2f} deg")
 print(f"Rudder:   {np.rad2deg(deltar):.2f} deg")
 print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+# Compute transfer functions and state spaces
+T_phi_delta_a, T_chi_phi, T_theta_delta_e, T_h_theta, T_h_Va, T_Va_delta_t, T_Va_theta, T_Va_theta, T_beta_delta_r = gains.compute_tfs(x_trim, u_trim)
+Alat, Blat, elatvalue, elongvalue = gains.statespace(x_trim, u_trim)
 
 pn = 0
 pe = 0
