@@ -63,8 +63,8 @@ phis = np.zeros(buffer); thetas = np.zeros(buffer); psis = np.zeros(buffer)
 ps = np.zeros(buffer); qs = np.zeros(buffer); rs = np.zeros(buffer)
 
 Va = 35.
-Y = np.deg2rad(10)
-R = 100.
+Y = np.deg2rad(0)
+R = np.inf
 alpha = 0
 beta = 0
 
@@ -80,6 +80,7 @@ print(f"Rudder:   {np.rad2deg(deltar):.2f} deg")
 T_phi_delta_a, T_chi_phi, T_theta_delta_e, T_h_theta, T_h_Va, T_Va_delta_t, T_Va_theta, T_Va_theta, T_beta_delta_r = gains.compute_tfs(x_trim, u_trim)
 Alat, Blat, elatvalue, elongvalue = gains.statespace(x_trim, u_trim)
 
+# Initial States
 pn = 0
 pe = 0
 pd = -100
@@ -92,6 +93,76 @@ psi = x_trim.item(8)
 p = x_trim.item(9)
 q = x_trim.item(10)
 r = x_trim.item(11)
+
+# # Short Period
+# pn = 0
+# pe = 0
+# pd = -100
+# u = x_trim.item(3) + 10
+# v = x_trim.item(4)
+# w = x_trim.item(5)
+# phi = x_trim.item(6)
+# theta = x_trim.item(7)
+# psi = x_trim.item(8)
+# p = x_trim.item(9)
+# q = x_trim.item(10) + 10
+# r = x_trim.item(11)
+
+# # Phugoid
+# pn = 0
+# pe = 0
+# pd = -100
+# u = x_trim.item(3) - 10
+# v = x_trim.item(4)
+# w = x_trim.item(5)
+# phi = x_trim.item(6)
+# theta = x_trim.item(7)*10
+# psi = x_trim.item(8)
+# p = x_trim.item(9)
+# q = x_trim.item(10) + 10
+# r = x_trim.item(11)
+
+# # Rolling
+# pn = 0
+# pe = 0
+# pd = -100
+# u = x_trim.item(3) 
+# v = x_trim.item(4)
+# w = x_trim.item(5)
+# phi = x_trim.item(6)
+# theta = x_trim.item(7)
+# psi = x_trim.item(8)
+# p = x_trim.item(9) + 10
+# q = x_trim.item(10)
+# r = x_trim.item(11)
+
+# # Spiral
+# pn = 0
+# pe = 0
+# pd = -100
+# u = x_trim.item(3) 
+# v = x_trim.item(4)
+# w = x_trim.item(5)
+# phi = x_trim.item(6)
+# theta = x_trim.item(7)
+# psi = x_trim.item(8)
+# p = x_trim.item(9)
+# q = x_trim.item(10)
+# r = x_trim.item(11) + 40
+
+# # Dutch
+# pn = 0
+# pe = 0
+# pd = -100
+# u = x_trim.item(3) 
+# v = x_trim.item(4)
+# w = x_trim.item(5)
+# phi = x_trim.item(6) + 10
+# theta = x_trim.item(7)
+# psi = x_trim.item(8)
+# p = x_trim.item(9)*10
+# q = x_trim.item(10)
+# r = x_trim.item(11)*10
 
 states = np.array([pn, pe, pd, u, v, w, phi, theta, psi, p, q, r])
 state0 = np.array([[pn], [pe], [pd], [u], [v], [w], [phi], [theta], [psi], [p], [q], [r]])
@@ -109,7 +180,7 @@ while sim_time < P.end_time:
         fx, fy, fz = Aero.forces(MAV.state, alpha, beta, deltaa, deltae, deltar, deltat, Va_actual)
         l, m, n = Aero.moments(MAV.state, alpha, beta, deltaa, deltae, deltar, deltat, Va_actual)
         y = MAV.update(fx, fy, fz, l, m, n)
-        MAV_anim.update(y[0][0], y[1][0], y[2][0], y[6][0], y[7][0], y[8][0])
+        # MAV_anim.update(y[0][0], y[1][0], y[2][0], y[6][0], y[7][0], y[8][0])
         sim_time += P.ts_simulation
 
     # make lists for plotting
