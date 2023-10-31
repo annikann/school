@@ -1,12 +1,15 @@
 import library.smdParam as P
+import numpy as np
 
 class smdController:
     def __init__(self):
         self.m = P.m
         self.k = P.k
         self.b = P.b
-        self.kP = 4.5
-        self.kD = 12
+        self.Fmax = P.Fmax
+
+        self.kP = 3.05
+        self.kD = 7.2
 
     def update(self, zc, state):
         z = state[0]
@@ -14,4 +17,10 @@ class smdController:
         feq = P.k*z
         fc = self.kP*(zc - z)  - self.kD*zdot
         f = feq + fc
+        # f = self.saturate(f, self.Fmax)
         return f[0]
+    
+    def saturate(self, u, limit):
+        if abs(u) > limit:
+            u = limit*np.sign(u)
+        return u

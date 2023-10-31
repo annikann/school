@@ -20,7 +20,7 @@ class smdDynamics:
         self.k = P.k * (1.+alpha*(2.*np.random.rand()-1.))
         # Gravity constant
         self.g = P.g
-        self.force_limit = P.F_max       
+        self.force_limit = P.Fmax       
 
     def update(self, u):
         # This is the external method that takes the input u at time
