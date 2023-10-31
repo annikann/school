@@ -8,8 +8,13 @@ class smdController:
         self.b = P.b
         self.Fmax = P.Fmax
 
-        self.kP = 3.05
-        self.kD = 7.2
+        ## ORIGINAL GAINS
+        # self.kP = 3.05
+        # self.kD = 7.2
+
+        ## ITERATED
+        self.kP = 5.9
+        self.kD = 8.6
 
     def update(self, zc, state):
         z = state[0]
@@ -17,7 +22,7 @@ class smdController:
         feq = P.k*z
         fc = self.kP*(zc - z)  - self.kD*zdot
         f = feq + fc
-        # f = self.saturate(f, self.Fmax)
+        f = self.saturate(f, self.Fmax)
         return f[0]
     
     def saturate(self, u, limit):
