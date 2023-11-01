@@ -17,9 +17,9 @@ animation = smdAnimation(limits=2, multfigs=True)
 tr = 1.7
 wn = 2.2/tr
 damprat = 0.7
-a = 2*damprat*wn
+b = 2*damprat*wn
 c = wn**2
-control.kD = P.m*(a - P.b/P.m)
+control.kD = P.m*(b - P.b/P.m)
 control.kP = P.m*(c - P.k/P.m)
 
 # add subplots

@@ -4,8 +4,8 @@ class vtolController:
     def __init__(self):
         self.mr = P.mr
         self.mc = P.mc
-        self.kP = 0.09
-        self.kD = 0.75
+        self.kP = 0.1134
+        self.kD = 0.5833
 
     def update(self, hc, state):
         h = state[2]
