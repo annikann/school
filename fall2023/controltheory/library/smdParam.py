@@ -7,7 +7,7 @@ g = 9.8    # Gravity, m/s**2
 # k = 3      # Spring coefficient
 # b = 0.5    # Damping coefficient, Ns
 
-# Variable parameters
+# Randomize parameters
 m = np.random.uniform(0.8*5, 1.2*5)         # mass of mass (kg)
 k = np.random.uniform(0.8*3, 1.2*3)         # spring constant (N/m)
 b = np.random.uniform(0.8*0.5, 1.2*0.5)     # damping coefficient (Ns/m)
