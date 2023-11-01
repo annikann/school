@@ -2,10 +2,15 @@
 import numpy as np
 
 # Physical parameters
-m = 5     # Mass, kg
 g = 9.8    # Gravity, m/s**2
-b = 0.5    # Damping coefficient, Ns
-k = 3      # Spring coefficient
+# m = 5      # Mass, kg
+# k = 3      # Spring coefficient
+# b = 0.5    # Damping coefficient, Ns
+
+# Variable parameters
+m = np.random.uniform(0.8*5, 1.2*5)         # mass of mass (kg)
+k = np.random.uniform(0.8*3, 1.2*3)         # spring constant (N/m)
+b = np.random.uniform(0.8*0.5, 1.2*0.5)     # damping coefficient (Ns/m)
 
 # parameters for animation
 w = 0.5          # Width of the cart, m

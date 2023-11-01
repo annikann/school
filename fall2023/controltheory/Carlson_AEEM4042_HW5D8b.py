@@ -42,7 +42,7 @@ z_target = 1
 t = P.t_start  # time starts at t_start
 while t < P.t_end:  # main simulation loop
 
-    u = control.update(z_target, smd.state)
+    u = control.updatePD(z_target, smd.state)
     z = smd.update(u)
 
     sim_times.append(t)

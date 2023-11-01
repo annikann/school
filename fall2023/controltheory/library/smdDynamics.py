@@ -39,7 +39,7 @@ class smdDynamics:
         # The equations of motion.
         zddot = (f - self.b*zdot - self.k*z)/self.m
         # Build and return xdot
-        xdot = np.array([[zdot], [zddot]])
+        xdot = np.array([[zdot], [zddot]], dtype=float)
         return xdot
 
     def h(self):

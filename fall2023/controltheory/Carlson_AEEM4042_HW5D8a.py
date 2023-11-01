@@ -1,6 +1,7 @@
 import sys
 sys.path.append('/Users/annikacarlson/Documents/school/controltheory/library')
 import matplotlib.pyplot as plt
+import numpy as np
 import library.smdParam as P
 from library.signalGenerator import signalGenerator
 from library.smdAnimation import smdAnimation
@@ -10,7 +11,7 @@ import keyboard
 
 # instantiate SMD, controller, and animation
 smd = smdDynamics(alpha=0.0)
-control = smdController()
+control = smdController(Fmax=np.inf)
 animation = smdAnimation(limits=2, multfigs=True)
 
 # set gains for controller (calculated)
@@ -37,7 +38,7 @@ z_target = 1
 t = P.t_start  # time starts at t_start
 while t < P.t_end:  # main simulation loop
 
-    u = control.update(z_target, smd.state)
+    u = control.updatePD(z_target, smd.state)
     z = smd.update(u)
 
     sim_times.append(t)
