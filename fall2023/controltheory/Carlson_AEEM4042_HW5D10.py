@@ -13,15 +13,15 @@ smd = smdDynamics(alpha=0.0)
 control = smdController(Fmax=6, sigma=0.05, flag=False)
 animation = smdAnimation(limits=2, multfigs=True)
 
-# set values for controller
-tr = 2
-wn = 2.2/tr
-damprat = 0.7
-a = 2*damprat*wn
-c = wn**2
-control.kD = P.m*(a - P.b/P.m)
-control.kP = P.m*(c - P.k/P.m)
+# set values for controller (nominal kD and kP)
+control.kD = 7.2
+control.kP = 3.05 
 control.kI = 0.5
+
+# print mass, spring constant, and damping coefficient
+print(f"\nMass = {P.m:.2f}")
+print(f"k = {P.k:.2f}")
+print(f"b = {P.b:.2f}\n")
 
 # add subplots
 z_plot = animation.fig.add_subplot(3, 2, 2)

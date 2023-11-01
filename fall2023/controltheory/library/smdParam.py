@@ -2,7 +2,7 @@
 import numpy as np
 
 # Physical parameters
-g = 9.8    # Gravity, m/s**2
+g = 9.81     # Gravity, m/s**2
 # m = 5      # Mass, kg
 # k = 3      # Spring coefficient
 # b = 0.5    # Damping coefficient, Ns
@@ -26,7 +26,7 @@ zdot0 = 0.0             # ,m/s
 t_start = 0.0  # Start time of simulation
 t_end = 1000.0  # End time of simulation
 Ts = 0.1  # sample time for simulation
-t_plot = 0.1  # the plotting and animation is updated at this rate
+t_plot = 0.01  # the plotting and animation is updated at this rate
 
 # saturation limits
 Fmax = 6.0                # Max Force, N
