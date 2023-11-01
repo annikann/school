@@ -2,19 +2,16 @@ import library.smdParam as P
 import numpy as np
 
 class smdController:
-    def __init__(self):
+    def __init__(self, Fmax):
         self.m = P.m
         self.k = P.k
         self.b = P.b
-        self.Fmax = P.Fmax
+        self.Fmax = Fmax
 
-        ## ORIGINAL GAINS
-        # self.kP = 3.05
-        # self.kD = 7.2
-
-        ## ITERATED
-        self.kP = 5.9
-        self.kD = 8.6
+        # ORIGINAL GAINS
+        self.kP = 3.05
+        self.kD = 7.2
+        self.kI = 0.4
 
     def update(self, zc, state):
         z = state[0]
