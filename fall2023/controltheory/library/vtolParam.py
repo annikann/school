@@ -14,9 +14,9 @@ w = 0.5       # Width of the body, m
 h = 0.5       # Height of the body, m
 
 # Initial Conditions
-z0 = 0.0                # ,m
+z0 = 3.0                # ,m
 zdot0 = 0.0             # ,m/s
-h0 = 0.0                # ,m
+h0 = 5.0                # ,m
 hdot0 = 0.0             # ,m/s    
 theta0 = 0.0            # ,rads
 thetadot0 = 0.0         # ,rads/sec
@@ -28,5 +28,5 @@ Ts = 0.1  # sample time for simulation
 t_plot = 0.1  # the plotting and animation is updated at this rate
 
 # saturation limits
-F_max = 25.0                # Max Force, N
+F_max = 10.0                # Max Force, N
 
