@@ -10,7 +10,7 @@ import keyboard
 
 # instantiate SMD, controller, and animation
 smd = smdDynamics(alpha=0.0)
-control = smdController(Fmax=6, sigma=0.05, flag=True)
+control = smdController(Fmax=6, sigma=0.05, flag=False)
 animation = smdAnimation(limits=2, multfigs=True)
 
 # set values for controller
@@ -21,7 +21,7 @@ a = 2*damprat*wn
 c = wn**2
 control.kD = P.m*(a - P.b/P.m)
 control.kP = P.m*(c - P.k/P.m)
-control.kI = 1
+control.kI = 0.5
 
 # add subplots
 z_plot = animation.fig.add_subplot(3, 2, 2)
