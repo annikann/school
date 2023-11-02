@@ -19,7 +19,7 @@ class vtolController2:
         self.Fmax = P.F_max
 
     def update(self, zc, hc, state):
-        z, h, theta, zdot, hdot, thetadot = state.flatten()
+        z, zdot, h, hdot, theta, thetadot = state.flatten()
         
         # Theta
         taueq = 0.
@@ -36,17 +36,17 @@ class vtolController2:
         fr = (tau + self.d*f)/(2*self.d)
         fl = f - fr
 
-        fr, fl = self.saturate(fr, fl)
+        # fr, fl = self.saturate(fr, fl)
         
-        # # Saturate
-        # if fr >= 10:
-        #     fr = 10
-        # if fl >= 10:
-        #     fl = 10
-        # if fr < 0:
-        #     fr = 0
-        # if fl < 0:
-        #     fl = 0
+        # Saturate
+        if fr >= 10:
+            fr = 10
+        if fl >= 10:
+            fl = 10
+        if fr < 0:
+            fr = 0
+        if fl < 0:
+            fl = 0
 
         return fr, fl
     

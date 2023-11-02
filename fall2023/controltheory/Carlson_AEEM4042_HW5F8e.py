@@ -15,7 +15,7 @@ control = vtolController2()
 animation = vtolAnimation(limits=10, multfigs=True)
 
 # signal input
-z_val = signalGenerator(0.25, 0.08)
+z_val = signalGenerator(amplitude=0.25, frequency=0.08)
 
 # add subplots
 z_plot = animation.fig.add_subplot(4, 2, 2)
@@ -24,24 +24,24 @@ theta_plot = animation.fig.add_subplot(4, 2, 6)
 f_plot = animation.fig.add_subplot(4, 2, 8)
 
 # create lists for plotting
-sim_times = [0]
 zs = [P.z0]
 thetas = [0]
 hs = [P.h0]
 frs = [0]
 fls = [0]
-h_targets = [0]
-z_targets = [0]
+h_targets = [5.]
+z_targets = [P.z0]
 
 t = P.t_start  # time starts at t_start
+sim_times = [t]
 while t < P.t_end:
 
-    # if t > 1.0:
-    h_target = P.h0
-    z_target = 3 + z_val.step(t)
+    h_target = 5.
+    z_target = 3 + z_val.square(t)
 
     fr, fl = control.update(z_target, h_target, VTOL.state)
     y = VTOL.update(fr, fl)  # Propagate the dynamics
+    t += P.Ts
 
     sim_times.append(t)
     zs.append(y[0][0])
@@ -55,13 +55,12 @@ while t < P.t_end:
     animation.update(VTOL.state)
 
     z_plot.clear(); h_plot.clear(); theta_plot.clear(); f_plot.clear()
-
     z_plot.plot(sim_times, zs, label="state", color='c')
     z_plot.plot(sim_times, z_targets, label="target", color='m')
     z_plot.legend(loc="upper left")
     z_plot.set_ylabel("Z (m)")
     z_plot.grid()
-
+    
     h_plot.plot(sim_times, hs, label="state", color='c')
     h_plot.plot(sim_times, h_targets, label="target", color='m')
     h_plot.legend(loc="upper left")
@@ -80,5 +79,4 @@ while t < P.t_end:
 
     plt.pause(0.01)
 
-    t += P.Ts
     if keyboard.is_pressed("q"): break

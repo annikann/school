@@ -40,7 +40,8 @@ class vtolDynamics:
         thetadot = state[5][0]
         # Create equations of motion.
         zddot = (-1*(fr + fl)*np.sin(theta) - self.mu*zdot)/(self.mc + 2*self.mr)
-        hddot = ((fr + fl)*np.cos(theta) - (self.mc + 2*self.mr)*self.g)/(self.mc + 2*self.mr)
+        # hddot = ((fr + fl)*np.cos(theta) - (self.mc + 2*self.mr)*self.g)/(self.mc + 2*self.mr)
+        hddot = ((fr + fl)*np.cos(theta))/(self.mc + 2*self.mr) - self.g
         thetaddot = (self.d*(fr - fl))/(self.Jc + 2*self.mr*self.d**2)
         # Build and return xdot
         xdot = np.array([[zdot], [zddot], [hdot], [hddot], [thetadot], [thetaddot]])
