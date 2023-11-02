@@ -36,17 +36,7 @@ class vtolController2:
         fr = (tau + self.d*f)/(2*self.d)
         fl = f - fr
 
-        # fr, fl = self.saturate(fr, fl)
-        
-        # Saturate
-        if fr >= 10:
-            fr = 10
-        if fl >= 10:
-            fl = 10
-        if fr < 0:
-            fr = 0
-        if fl < 0:
-            fl = 0
+        fr, fl = self.saturate(fr, fl)
 
         return fr, fl
     

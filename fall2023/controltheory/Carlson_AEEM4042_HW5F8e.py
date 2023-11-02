@@ -15,7 +15,7 @@ control = vtolController2()
 animation = vtolAnimation(limits=10, multfigs=True)
 
 # signal input
-z_val = signalGenerator(amplitude=0.25, frequency=0.08)
+z_val = signalGenerator(amplitude=2.5, frequency=0.08)
 
 # add subplots
 z_plot = animation.fig.add_subplot(4, 2, 2)
@@ -24,24 +24,36 @@ theta_plot = animation.fig.add_subplot(4, 2, 6)
 f_plot = animation.fig.add_subplot(4, 2, 8)
 
 # create lists for plotting
-zs = [P.z0]
+zs = [3.]
 thetas = [0]
-hs = [P.h0]
+hs = [5.]
 frs = [0]
 fls = [0]
-h_targets = [5.]
-z_targets = [P.z0]
+h_target = 5.
+z_target = 3.
+h_targets = [h_target]
+z_targets = [z_target]
 
 t = P.t_start  # time starts at t_start
 sim_times = [t]
 while t < P.t_end:
 
-    h_target = 5.
-    z_target = 3 + z_val.square(t)
+    t_next_plot = t + P.t_plot
+    while t < t_next_plot:
+        if t > 1.0:
+            h_target = 5.
+            z_target = 3 + z_val.square(t)
+    
+        fr, fl = control.update(z_target, h_target, VTOL.state)
+        y = VTOL.update(fr, fl)
+        t += P.Ts
 
-    fr, fl = control.update(z_target, h_target, VTOL.state)
-    y = VTOL.update(fr, fl)  # Propagate the dynamics
-    t += P.Ts
+    # h_target = 5.
+    # z_target = 3 + z_val.square(t)
+
+    # fr, fl = control.update(z_target, h_target, VTOL.state)
+    # y = VTOL.update(fr, fl)  # Propagate the dynamics
+    # t += P.Ts
 
     sim_times.append(t)
     zs.append(y[0][0])
@@ -55,14 +67,17 @@ while t < P.t_end:
     animation.update(VTOL.state)
 
     z_plot.clear(); h_plot.clear(); theta_plot.clear(); f_plot.clear()
+
     z_plot.plot(sim_times, zs, label="state", color='c')
     z_plot.plot(sim_times, z_targets, label="target", color='m')
+    z_plot.set_ylim(-1,7)
     z_plot.legend(loc="upper left")
     z_plot.set_ylabel("Z (m)")
     z_plot.grid()
-    
+
     h_plot.plot(sim_times, hs, label="state", color='c')
     h_plot.plot(sim_times, h_targets, label="target", color='m')
+    h_plot.set_ylim(0,10)
     h_plot.legend(loc="upper left")
     h_plot.set_ylabel("Height (m)")
     h_plot.grid()
