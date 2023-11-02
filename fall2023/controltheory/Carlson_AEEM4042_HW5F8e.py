@@ -48,13 +48,6 @@ while t < P.t_end:
         y = VTOL.update(fr, fl)
         t += P.Ts
 
-    # h_target = 5.
-    # z_target = 3 + z_val.square(t)
-
-    # fr, fl = control.update(z_target, h_target, VTOL.state)
-    # y = VTOL.update(fr, fl)  # Propagate the dynamics
-    # t += P.Ts
-
     sim_times.append(t)
     zs.append(y[0][0])
     hs.append(y[1][0])

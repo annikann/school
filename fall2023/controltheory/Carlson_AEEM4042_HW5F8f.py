@@ -1,9 +1,10 @@
 import sys
 sys.path.append('/Users/annikacarlson/Documents/school/controltheory/library')
 import matplotlib.pyplot as plt
-import library.vtolParam as P
+import library.vtolParam2 as P
+import numpy as np
 from library.vtolAnimation import vtolAnimation
-from library.vtolDynamics import vtolDynamics
+from library.vtolDynamics2 import vtolDynamics
 from library.vtolController2 import vtolController2
 import keyboard
 
@@ -14,7 +15,7 @@ animation = vtolAnimation(limits=10, multfigs=True)
 
 # Set parameters to tune controller
 # h
-tr_h = 2.61
+tr_h = 8.
 wn_h = 2.2/tr_h
 damprat = 0.707
 b = 2*damprat*wn_h
@@ -29,65 +30,81 @@ c = wn_th**2
 control.kDth = b*(P.Jc + 2*P.mr*P.d**2)
 control.kPth = c*(P.Jc + 2*P.mr*P.d**2)
 # z
-tr_z = 2.9
+tr_z = 6.
 wn_z = 2.2/tr_z
 b = 2*damprat*wn_z
 c = wn_z**2
-control.kDz = (b - P.u/(P.mc + 2*P.mr))/-P.g
+control.kDz = (b - P.mu/(P.mc + 2*P.mr))/-P.g
 control.kPz = c/-P.g
 
 # add subplots
-z_plot = animation.fig.add_subplot(2, 2, 2)
-f_plot = animation.fig.add_subplot(2, 2, 4)
+z_plot = animation.fig.add_subplot(4, 2, 2)
+h_plot = animation.fig.add_subplot(4, 2, 4)
+theta_plot = animation.fig.add_subplot(4, 2, 6)
+f_plot = animation.fig.add_subplot(4, 2, 8)
 
-# empty lists for plotting
-sim_times = []
-zs = []
-fs = []
-z_targets = []
-
-# set initial values
-z = 3
-u = 0
-z_target = 0.0
+# create lists for plotting
+zs = [0.]
+thetas = [0.]
+hs = [0.1]
+frs = [0]
+fls = [0]
+h_target = 5.
+z_target = 5.
+h_targets = [h_target]
+z_targets = [z_target]
 
 t = P.t_start  # time starts at t_start
+sim_times = [t]
 while t < P.t_end:
-    if t <= 2:
-        z_target = 0.0
-    elif t <= 25:
-        z_target = 5
-    elif t <= 50:
-        z_target = 7
-    elif t <= 65:
-        z_target = 2
-    elif t <= 80:
-        z_target = 5
-    else:
-        z_target = 0.25
 
-    F = control.update(z_target, VTOL.state)
-    y = VTOL.update(F/2., F/2.)  # Propagate the dynamics
+    t_next_plot = t + P.t_plot
+    while t < t_next_plot:
+        if t > 1.0:
+            h_target = 5.
+            z_target = 5.
+    
+        fr, fl = control.update(z_target, h_target, VTOL.state)
+        y = VTOL.update(fr, fl)
+        t += P.Ts
 
     sim_times.append(t)
-    zs.append(y[1][0])
-    fs.append(F)
+    zs.append(y[0][0])
+    hs.append(y[1][0])
+    thetas.append(np.rad2deg(y[2][0]))
+    frs.append(fr)
+    fls.append(fl)
+    h_targets.append(h_target)
     z_targets.append(z_target)
 
     animation.update(VTOL.state)
 
-    z_plot.clear(); f_plot.clear()
+    z_plot.clear(); h_plot.clear(); theta_plot.clear(); f_plot.clear()
+
     z_plot.plot(sim_times, zs, label="state", color='c')
     z_plot.plot(sim_times, z_targets, label="target", color='m')
+    # z_plot.set_ylim(-1,7)
     z_plot.legend(loc="upper left")
-    z_plot.set_ylabel("z (m)")
+    z_plot.set_ylabel("Z (m)")
     z_plot.grid()
 
-    f_plot.plot(sim_times, fs, color = 'c')
-    f_plot.set_ylabel("Total Force (N)")
+    h_plot.plot(sim_times, hs, label="state", color='c')
+    h_plot.plot(sim_times, h_targets, label="target", color='m')
+    # h_plot.set_ylim(0,10)
+    h_plot.legend(loc="upper left")
+    h_plot.set_ylabel("Height (m)")
+    h_plot.grid()
+
+    theta_plot.plot(sim_times, thetas, color='c')
+    theta_plot.set_ylabel("Theta (deg)")
+    theta_plot.grid()
+
+    f_plot.plot(sim_times, frs, label="right", color = 'c')
+    f_plot.plot(sim_times, fls, label="left", color = 'm')
+    f_plot.legend(loc="upper left")
+    f_plot.set_ylabel("Forces (N)")
     f_plot.grid()
 
     plt.pause(0.01)
 
-    t += P.Ts
     if keyboard.is_pressed("q"): break
