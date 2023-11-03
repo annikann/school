@@ -1,7 +1,7 @@
 import sys
 sys.path.append('/Users/annikacarlson/Documents/school/controltheory/library')
 import matplotlib.pyplot as plt
-import library.vtolParam2 as P
+import library.vtolParam3 as P
 import numpy as np
 from library.vtolAnimation import vtolAnimation
 from library.vtolDynamics2 import vtolDynamics
@@ -10,7 +10,7 @@ import keyboard
 
 # instantiate VTOL, controller, and animation
 VTOL = vtolDynamics(alpha=0.0)
-control = vtolControllerPID(10., 0.05, flag=True)
+control = vtolControllerPID(10., 0.05, flag=False)
 animation = vtolAnimation(limits=10, multfigs=True)
 
 # Set parameters to tune controller
@@ -20,9 +20,9 @@ kPz = -0.00771
 kDz = -0.03285
 kPh = 0.1134
 kDh = 0.5833
-kIh = 0.
-kIth = 0.
-kIz = 0.
+kIh = 0.5
+kIth = 0.5
+kIz = 0.5
 
 # add subplots
 z_plot = animation.fig.add_subplot(4, 2, 2)
@@ -37,7 +37,7 @@ hs = [P.h0]
 frs = [0]
 fls = [0]
 h_target = 5.
-z_target = 0.
+z_target = 5.
 h_targets = [h_target]
 z_targets = [z_target]
 
@@ -49,7 +49,7 @@ while t < P.t_end:
     while t < t_next_plot:
         if t > 1.0:
             h_target = 5.
-            z_target = 0.
+            z_target = 5.
     
         z, h, theta = VTOL.h().flatten()
         fr, fl = control.update(h_target, z_target, h, z, theta)
@@ -71,14 +71,12 @@ while t < P.t_end:
 
     z_plot.plot(sim_times, zs, label="state", color='c')
     z_plot.plot(sim_times, z_targets, label="target", color='m')
-    # z_plot.set_ylim(-1,7)
     z_plot.legend(loc="upper left")
     z_plot.set_ylabel("Z (m)")
     z_plot.grid()
 
     h_plot.plot(sim_times, hs, label="state", color='c')
     h_plot.plot(sim_times, h_targets, label="target", color='m')
-    # h_plot.set_ylim(0,10)
     h_plot.legend(loc="upper left")
     h_plot.set_ylabel("Height (m)")
     h_plot.grid()
