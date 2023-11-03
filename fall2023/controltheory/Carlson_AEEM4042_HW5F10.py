@@ -10,7 +10,7 @@ import keyboard
 
 # instantiate VTOL, controller, and animation
 VTOL = vtolDynamics(alpha=0.0)
-control = control()
+ctrl = control()
 animation = vtolAnimation(limits=10, multfigs=True)
 
 # Set parameters to tune controller
@@ -21,7 +21,7 @@ kDz = -0.03285
 kPh = 0.1134
 kDh = 0.5833
 kIh = 0.
-kIth = 0.
+kIth = 0.5
 kIz = 0.
 
 # add subplots
@@ -51,7 +51,7 @@ while t < P.t_end:
             h_target = 5.
             z_target = 5.
     
-        fr, fl = control.update(h_target, z_target, VTOL.h())
+        fr, fl = ctrl.update(h_target, z_target, VTOL.h())
         y = VTOL.update(fr, fl)
         t += P.Ts
 

@@ -26,6 +26,8 @@ w = 0.5       # Width of the body, m
 h = 0.5       # Height of the body, m
 
 # Initial Conditions
+fr0 = 0.0               # ,N
+fl0 = 0.0               # ,N
 z0 = 0.0                # ,m
 zdot0 = 0.0             # ,m/s
 h0 = 0.1                # ,m
