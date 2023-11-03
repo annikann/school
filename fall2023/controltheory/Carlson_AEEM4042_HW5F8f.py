@@ -6,6 +6,7 @@ import numpy as np
 from library.vtolAnimation import vtolAnimation
 from library.vtolDynamics2 import vtolDynamics
 from library.vtolController2 import vtolController2
+from library.signalGenerator import signalGenerator
 import keyboard
 
 # instantiate VTOL, controller, and animation
@@ -13,9 +14,12 @@ VTOL = vtolDynamics(alpha=0.0)
 control = vtolController2()
 animation = vtolAnimation(limits=10, multfigs=True)
 
+# signal input
+z_val = signalGenerator(amplitude=2.5, frequency=0.08)
+
 # Set parameters to tune controller
 # h
-tr_h = 8.
+tr_h = 7.5
 wn_h = 2.2/tr_h
 damprat = 0.707
 b = 2*damprat*wn_h
@@ -30,7 +34,7 @@ c = wn_th**2
 control.kDth = b*(P.Jc + 2*P.mr*P.d**2)
 control.kPth = c*(P.Jc + 2*P.mr*P.d**2)
 # z
-tr_z = 6.
+tr_z = 4.5
 wn_z = 2.2/tr_z
 b = 2*damprat*wn_z
 c = wn_z**2
@@ -62,7 +66,7 @@ while t < P.t_end:
     while t < t_next_plot:
         if t > 1.0:
             h_target = 5.
-            z_target = 5.
+            z_target = 3 + z_val.square(t)
     
         fr, fl = control.update(z_target, h_target, VTOL.state)
         y = VTOL.update(fr, fl)
