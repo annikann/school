@@ -43,7 +43,8 @@ class vtolControllerPID:
     def update(self, hc, zc, h, z, theta):
         # Theta
         taueq = 0.
-        zs = self.PIDz(zc, z)
+        # zs = self.PIDz(zc, z)
+        zs = self.PDz(zc, z)
         tauc = self.PIDt(zs, theta)
         tau = taueq + tauc
         
@@ -67,33 +68,46 @@ class vtolControllerPID:
         # Compute the current error
         error = y_r - y
         # integrate error using trapazoidal rule
-        self.integratorz = self.integratorz \
-        + (self.Ts/2) * (error + self.error_d1z)
+        self.integratorz = self.integratorz + (self.Ts/2) * (error + self.error_d1z)
         # PID Control
         if self.flag is True:
             # differentiate error
-            self.error_dotz = self.beta * self.error_dotz \
-                + (1-self.beta)/self.Ts * (error - self.error_d1z)
+            self.error_dotz = self.beta * self.error_dotz + (1-self.beta)/self.Ts * (error - self.error_d1z)
             # PID control
-            u_unsat = self.kPz*error \
-                + self.kiz*self.integratorz \
-                + self.kDz*self.error_dotz
+            u_unsat = self.kPz*error + self.kiz*self.integratorz + self.kDz*self.error_dotz
         else:
             # differentiate y
-            self.y_dotz = self.beta * self.y_dotz \
-            + (1-self.beta)/self.Ts * (y - self.y_d1z)
+            self.y_dotz = self.beta * self.y_dotz + (1-self.beta)/self.Ts * (y - self.y_d1z)
             # PID control
-            u_unsat = self.kPz*error \
-                + self.kiz*self.integratorz \
-                - self.kDz*self.y_dotz
+            u_unsat = self.kPz*error + self.kiz*self.integratorz - self.kDz*self.y_dotz
         # return saturated control signal
         u_sat = self.saturate(u_unsat)
         # integrator anti - windup
         if self.kiz != 0.0:
-            self.integratorz = self.integratorz \
-                + 1.0 / self.kiz * (u_sat - u_unsat)
+            self.integratorz = self.integratorz + 1.0 / self.kiz * (u_sat - u_unsat)
         # update delayed variables
         self.error_d1z = error
+        self.y_d1z = y
+        return u_sat
+    
+    def PDz(self, y_r, y):
+        # Compute the current error
+        error = y_r - y
+        # PD Control
+        if self.flag is True:
+            # differentiate error
+            self.error_dotz = self.beta * self.error_dotz + (1-self.beta)/self.Ts * (error - self.error_d1z)
+            # PD control
+            u_unsat = self.kPz*error + self.kDz*self.error_dotz
+        else:
+            # differentiate y
+            self.y_dotz = self.beta * self.y_dotz + (1-self.beta)/self.Ts * (y - self.y_d1z)
+            # PD control
+            u_unsat = self.kPz*error - self.kDz*self.y_dotz
+        # return saturated control signal
+        u_sat = self.saturate(u_unsat)
+        # update delayed variables
+        self.error_d1 = error
         self.y_d1z = y
         return u_sat
     
@@ -107,26 +121,19 @@ class vtolControllerPID:
         # PID Control
         if self.flag is True:
             # differentiate error
-            self.error_dott = self.beta * self.error_dott \
-                + (1-self.beta)/self.Ts * (error - self.error_d1t)
+            self.error_dott = self.beta * self.error_dott + (1-self.beta)/self.Ts * (error - self.error_d1t)
             # PID control
-            u_unsat = self.kPth*error \
-                + self.kit*self.integratort \
-                + self.kDth*self.error_dott
+            u_unsat = self.kPth*error + self.kit*self.integratort + self.kDth*self.error_dott
         else:
             # differentiate y
-            self.y_dott = self.beta * self.y_dott \
-            + (1-self.beta)/self.Ts * (y - self.y_d1t)
+            self.y_dott = self.beta * self.y_dott + (1-self.beta)/self.Ts * (y - self.y_d1t)
             # PID control
-            u_unsat = self.kPth*error \
-                + self.kit*self.integratort \
-                - self.kDth*self.y_dott
+            u_unsat = self.kPth*error + self.kit*self.integratort - self.kDth*self.y_dott
         # return saturated control signal
         u_sat = self.saturate(u_unsat)
         # integrator anti - windup
         if self.kit != 0.0:
-            self.integratort = self.integratort \
-                + 1.0 / self.kit * (u_sat - u_unsat)
+            self.integratort = self.integratort + 1.0 / self.kit * (u_sat - u_unsat)
         # update delayed variables
         self.error_d1t = error
         self.y_d1t = y
@@ -142,31 +149,23 @@ class vtolControllerPID:
         # PID Control
         if self.flag is True:
             # differentiate error
-            self.error_doth = self.beta * self.error_doth \
-                + (1-self.beta)/self.Ts * (error - self.error_d1h)
+            self.error_doth = self.beta * self.error_doth + (1-self.beta)/self.Ts * (error - self.error_d1h)
             # PID control
-            u_unsat = self.kPh*error \
-                + self.kih*self.integratorh \
-                + self.kDh*self.error_doth
+            u_unsat = self.kPh*error + self.kih*self.integratorh + self.kDh*self.error_doth
         else:
             # differentiate y
-            self.y_doth = self.beta * self.y_doth \
-            + (1-self.beta)/self.Ts * (y - self.y_d1h)
+            self.y_doth = self.beta * self.y_doth + (1-self.beta)/self.Ts * (y - self.y_d1h)
             # PID control
-            u_unsat = self.kPh*error \
-                + self.kih*self.integratorh \
-                - self.kDh*self.y_doth
+            u_unsat = self.kPh*error + self.kih*self.integratorh - self.kDh*self.y_doth
         # return saturated control signal
         u_sat = self.saturate(u_unsat)
         # integrator anti - windup
         if self.kih != 0.0:
-            self.integratorh = self.integratorh \
-                + 1.0 / self.kih * (u_sat - u_unsat)
+            self.integratorh = self.integratorh + 1.0 / self.kih * (u_sat - u_unsat)
         # update delayed variables
         self.error_d1h = error
         self.y_d1h = y
         return u_sat
-    
     
     def saturate(self,u):
         if u > self.limit:

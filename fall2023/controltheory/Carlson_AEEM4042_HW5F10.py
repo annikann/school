@@ -5,12 +5,12 @@ import library.vtolParam3 as P
 import numpy as np
 from library.vtolAnimation import vtolAnimation
 from library.vtolDynamics2 import vtolDynamics
-from library.vtolControllerPID import vtolControllerPID
+from library.vtolController3 import control
 import keyboard
 
 # instantiate VTOL, controller, and animation
 VTOL = vtolDynamics(alpha=0.0)
-control = vtolControllerPID(10., 0.05, flag=False)
+control = control()
 animation = vtolAnimation(limits=10, multfigs=True)
 
 # Set parameters to tune controller
@@ -20,9 +20,9 @@ kPz = -0.00771
 kDz = -0.03285
 kPh = 0.1134
 kDh = 0.5833
-kIh = 0.5
-kIth = 0.5
-kIz = 0.5
+kIh = 0.
+kIth = 0.
+kIz = 0.
 
 # add subplots
 z_plot = animation.fig.add_subplot(4, 2, 2)
@@ -51,8 +51,7 @@ while t < P.t_end:
             h_target = 5.
             z_target = 5.
     
-        z, h, theta = VTOL.h().flatten()
-        fr, fl = control.update(h_target, z_target, h, z, theta)
+        fr, fl = control.update(h_target, z_target, VTOL.h())
         y = VTOL.update(fr, fl)
         t += P.Ts
 
