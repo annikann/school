@@ -1,3 +1,5 @@
+import sys
+sys.path.append('/Users/annikacarlson/Documents/school/controltheory/library')
 import numpy as np
 import matplotlib.pyplot as plt
 import control as ctl
