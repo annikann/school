@@ -2,7 +2,7 @@
 
 import numpy as np
 
-class autopilot:
+class Autopilot:
 
     def __init__(self, dt, altitude_take_off_zone, altitude_hold_zone):
         self.dt = dt
@@ -38,61 +38,61 @@ class autopilot:
         #Longitudinal Autopilot
         if t == 0:
             if h <= self.altitude_take_off_zone:
-                altitude_state = 0
+                self.altitude_state = 0
             elif h <= h_c - self.altitude_hold_zone:
-                altitude_state = 1
+                self.altitude_state = 1
             elif h >= h_c + self.altitude_hold_zone:
-                altitude_state = 2
+                self.altitude_state = 2
             else:
-                altitude_state = 3
-            initialize_integrator = 1
+                self.altitude_state = 3
+            self.initialize_integrator = 1
         
-        if altitude_state == 0:
+        if self.altitude_state == 0:
             delta_t = 1
             theta_c = 10*(np.pi/180)
             if h >= self.altitude_take_off_zone:
-                altitude_state = 1
-                initialize_integrator = 1
+                self.altitude_state = 1
+                self.initialize_integrator = 1
             else:
-                initialize_integrator = 0
-        elif altitude_state == 1:
+                self.initialize_integrator = 0
+        elif self.altitude_state == 1:
             delta_t = 1
-            theta_c = self.airspeed_hold_pitch(Va_c, Va, initialize_integrator, self.dt)
+            theta_c = self.airspeed_hold_pitch(Va_c, Va, self.initialize_integrator, self.dt)
             
             if h >= h_c - self.altitude_take_off_zone:
-                altitude_state = 3
-                initialize_integrator = 1
+                self.altitude_state = 3
+                self.initialize_integrator = 1
             elif h <= self.altitude_take_off_zone:
-                altitude_state = 0
-                initialize_integrator = 1
+                self.altitude_state = 0
+                self.initialize_integrator = 1
             else:
-                initialize_integrator = 0
-        elif altitude_state == 2:
+                self.initialize_integrator = 0
+        elif self.altitude_state == 2:
             delta_t = 0
-            theta_c = self.airspeed_hold_pitch(Va_c, Va, initialize_integrator, self.dt)
+            theta_c = self.airspeed_hold_pitch(Va_c, Va, self.initialize_integrator, self.dt)
             if h <= h_c + self.altitude_hold_zone:
-                altitude_state = 3
-                initialize_integrator = 1
+                self.altitude_state = 3
+                self.initialize_integrator = 1
             else:
-                initialize_integrator = 0
-        elif altitude_state == 3:
-            delta_t = self.airspeed_hold_throttle(Va_c, Va, initialize_integrator, self.dt)
-            theta_c = self.altitude_hold(h_c, h, initialize_integrator, self.dt)
+                self.initialize_integrator = 0
+        elif self.altitude_state == 3:
+            delta_t = self.airspeed_hold_throttle(Va_c, Va, self.initialize_integrator, self.dt)
+            theta_c = self.altitude_hold(h_c, h, self.initialize_integrator, self.dt)
             if h <= h_c - self.altitude_hold_zone:
-                altitude_state = 1
-                initialize_integrator = 1
+                self.altitude_state = 1
+                self.initialize_integrator = 1
             elif h >= h_c + self.altitude_hold_zone:
-                altitude_state = 2
-                initialize_integrator = 1
+                self.altitude_state = 2
+                self.initialize_integrator = 1
             else:
-                initialize_integrator = 0
+                self.initialize_integrator = 0
                 
         if t == 0:
             delta_e = self.pitch_hold(theta_c, theta, q, 1, self.dt)
         else:
             delta_e = self.pitch_hold(theta_c, theta, q, 0, self.dt)
         
-        return (delta_e, delta_a, delta_r, delta_t, phi_c, theta_c, chi_c, altitude_state)
+        return (delta_e, delta_a, delta_r, delta_t)
     
     def roll_hold(self, phi_c, phi, p, flag, dt):
         
@@ -260,7 +260,7 @@ class autopilot:
         return u_sat
 
 
-    def sat(inn, up_limit, low_limit):
+    def sat(self, inn, up_limit, low_limit):
         if inn > up_limit:
             out = up_limit
         elif inn < low_limit:

@@ -16,6 +16,7 @@ from library.compute_trim import ComputeTrim
 from library.mavAero import mavAero
 from library.wind import wind
 from library.compute_gains import ComputeGains
+from library.autopilot import Autopilot
 import library.aerosonde_parameters as P
 
 state = P.states0
@@ -26,6 +27,7 @@ Aero = mavAero()
 Vs = np.array([[0.],[0.],[0.]])
 Wind = wind(Vs)
 gains = ComputeGains()
+auto = Autopilot(P.ts_simulation, 10., 1.)
 
 # initialize the simulation and signal generator
 sim_time = P.start_time
@@ -57,126 +59,33 @@ phis = []; thetas = []; psis = []
 ps = []; qs = []; rs = []
 deltaas = []; deltaes = []; deltars = []; deltats = []
 
-Va = 35.
-Y = np.deg2rad(0)
-R = np.inf
-alpha = 0
-beta = 0
-
-x_trim, u_trim = Trim.compute_trim(Va, Y, R)
-deltae, deltat, deltaa, deltar = u_trim.flatten()
-print("\n~~~~~~~ Trim Conditions ~~~~~~~")
-print(f"Elevator: {np.rad2deg(deltae):.2f} deg")
-print(f"Throttle: {deltat*100:.2f} %")
-print(f"Aileron:  {np.rad2deg(deltaa):.2f} deg")
-print(f"Rudder:   {np.rad2deg(deltar):.2f} deg")
-print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
-
-# Compute transfer functions and state spaces
-T_phi_delta_a, T_chi_phi, T_theta_delta_e, T_h_theta, T_h_Va, T_Va_delta_t, T_Va_theta, T_Va_theta, T_beta_delta_r = gains.compute_tfs(x_trim, u_trim)
-Alat, Blat, elatvalue, elongvalue = gains.statespace(x_trim, u_trim)
-
-# Initial States
-pn = 0
-pe = 0
-pd = -100
-u = x_trim.item(3)
-v = x_trim.item(4)
-w = x_trim.item(5)
-phi = x_trim.item(6)
-theta = x_trim.item(7)
-psi = x_trim.item(8)
-p = x_trim.item(9)
-q = x_trim.item(10)
-r = x_trim.item(11)
-
-# # Short Period
-# pn = 0
-# pe = 0
-# pd = -100
-# u = x_trim.item(3) + 10
-# v = x_trim.item(4)
-# w = x_trim.item(5)
-# phi = x_trim.item(6)
-# theta = x_trim.item(7)
-# psi = x_trim.item(8)
-# p = x_trim.item(9)
-# q = x_trim.item(10) + 10
-# r = x_trim.item(11)
-
-# # Phugoid
-# pn = 0
-# pe = 0
-# pd = -100
-# u = x_trim.item(3) - 10
-# v = x_trim.item(4)
-# w = x_trim.item(5)
-# phi = x_trim.item(6)
-# theta = x_trim.item(7)*10
-# psi = x_trim.item(8)
-# p = x_trim.item(9)
-# q = x_trim.item(10) + 10
-# r = x_trim.item(11)
-
-# # Rolling
-# pn = 0
-# pe = 0
-# pd = -100
-# u = x_trim.item(3) 
-# v = x_trim.item(4)
-# w = x_trim.item(5)
-# phi = x_trim.item(6)
-# theta = x_trim.item(7)
-# psi = x_trim.item(8)
-# p = x_trim.item(9) + 10
-# q = x_trim.item(10)
-# r = x_trim.item(11)
-
-# # Spiral
-# pn = 0
-# pe = 0
-# pd = -100
-# u = x_trim.item(3) 
-# v = x_trim.item(4)
-# w = x_trim.item(5)
-# phi = x_trim.item(6)
-# theta = x_trim.item(7)
-# psi = x_trim.item(8)
-# p = x_trim.item(9)
-# q = x_trim.item(10)
-# r = x_trim.item(11) + 40
-
-# # Dutch
-# pn = 0
-# pe = 0
-# pd = -100
-# u = x_trim.item(3) 
-# v = x_trim.item(4)
-# w = x_trim.item(5)
-# phi = x_trim.item(6) + 10
-# theta = x_trim.item(7)
-# psi = x_trim.item(8)
-# p = x_trim.item(9)*10
-# q = x_trim.item(10)
-# r = x_trim.item(11)*10
-
-states = np.array([pn, pe, pd, u, v, w, phi, theta, psi, p, q, r])
-state0 = np.array([[pn], [pe], [pd], [u], [v], [w], [phi], [theta], [psi], [p], [q], [r]])
-MAV.state = np.ndarray.copy(state0)
-
-Va_actual = np.sqrt(u**2 + v**2 + w**2)
+# Initial targets
+Va = P.states0[3][0]
+Va_c = 35.
+h_c = 15.
+chi_c = np.deg2rad(0.)
+state = MAV.state
 
 print("\nPress Q to exit simulation")
 sim_time = P.start_time
 while sim_time < P.end_time:
     t_next_plot = sim_time + P.ts_plotting
     while sim_time < t_next_plot:
-        # call simulation
-        Va_actual, alpha, beta = Wind.windout(MAV.state, Va_actual, sim_time)
-        fx, fy, fz = Aero.forces(MAV.state, alpha, beta, deltaa, deltae, deltar, deltat, Va_actual)
-        l, m, n = Aero.moments(MAV.state, alpha, beta, deltaa, deltae, deltar, deltat, Va_actual)
+        # Wind (steady)
+        Va, alpha, beta = Wind.windout(state, Va, sim_time)
+
+        # Set states
+        pn, pe, pd, u, v, w, phi, theta, psi, p, q, r = state.flatten()
+
+        # Build U matrix and send to autopilot
+        U = np.array([sim_time, phi, theta, psi, p, q, r, Va, -pd, Va_c, h_c, chi_c])
+        deltae, deltaa, deltar, deltat = auto.update(U)
+
+        # Update forces and moments
+        fx, fy, fz = Aero.forces(MAV.state, alpha, beta, deltaa, deltae, deltar, deltat, Va)
+        l, m, n = Aero.moments(MAV.state, alpha, beta, deltaa, deltae, deltar, deltat, Va)
         y = MAV.update(fx, fy, fz, l, m, n)
-        # MAV_anim.update(y[0][0], y[1][0], y[2][0], y[6][0], y[7][0], y[8][0])
+        MAV_anim.update(y[0][0], y[1][0], y[2][0], y[6][0], y[7][0], y[8][0])
 
         sim_time += P.ts_simulation
 
