@@ -1,6 +1,7 @@
 # Autopilot class - Annika Carlson
 
 import numpy as np
+import library.autopilot_gains as gains
 
 class Autopilot:
 
@@ -99,9 +100,9 @@ class Autopilot:
         limit1 = np.deg2rad(45)
         limit2 = -np.deg2rad(45)
         
-        kp = 0.1
-        kd = 0.01
-        ki = 0
+        kp = gains.kp_roll
+        kd = gains.kd_roll
+        ki = gains.ki_roll
         
         if flag == 1:
             self.roll_integrator = 0
@@ -126,9 +127,9 @@ class Autopilot:
         limit1 = np.deg2rad(45)
         limit2 = -np.deg2rad(45)
         
-        kp = 0.1
-        kd = 0.01
-        ki = 0
+        kp = gains.kp_pitch
+        kd = gains.kd_pitch
+        ki = gains.ki_pitch
         
         if flag == 1:
             self.pitch_integrator = 0
@@ -153,9 +154,9 @@ class Autopilot:
         limit1 = np.deg2rad(45)
         limit2 = -np.deg2rad(45)
         
-        kp = 0.1
-        kd = 0.01
-        ki = 0
+        kp = gains.kp_course
+        kd = gains.kd_course
+        ki = gains.ki_course
         
         if flag == 1:
             self.course_integrator = 0
@@ -180,9 +181,9 @@ class Autopilot:
         limit1 = np.deg2rad(45)
         limit2 = -np.deg2rad(45)
         
-        kp = 0.1
-        kd = 0.01
-        ki = 0
+        kp = gains.kp_airspeed
+        kd = gains.kd_airspeed
+        ki = gains.ki_airspeed
         
         if flag == 1:
             self.ahp_integrator = 0
@@ -190,7 +191,7 @@ class Autopilot:
             self.ahp_error_d1 = 0
         
         tau = 5
-        error = Va_c - Va
+        error = -1*(Va_c - Va)
         self.ahp_integrator = self.ahp_integrator + (dt/2)*(error + self.ahp_error_d1)
         self.ahp_differentiator = (2*tau - dt)/(2*tau + dt)*self.ahp_differentiator + 2/(2*tau + dt)*(error - self.ahp_error_d1)
         self.ahp_error_d1 = error
@@ -208,9 +209,9 @@ class Autopilot:
         limit1 = 1.
         limit2 = 0.
         
-        kp = 0.1
-        kd = 0.01
-        ki = 0
+        kp = gains.kp_throttle
+        kd = gains.kd_throttle
+        ki = gains.ki_throttle
         
         if flag == 1:
             self.aht_integrator = 0
@@ -218,7 +219,7 @@ class Autopilot:
             self.aht_error_d1 = 0
         
         tau = 5
-        error = Va_c - Va
+        error = -1*(Va_c - Va)
         self.aht_integrator = self.aht_integrator + (dt/2)*(error + self.aht_error_d1)
         self.aht_differentiator = (2*tau - dt)/(2*tau + dt)*self.aht_differentiator + 2/(2*tau + dt)*(error - self.aht_error_d1)
         self.aht_error_d1 = error
@@ -233,12 +234,12 @@ class Autopilot:
 
     def altitude_hold(self, h_c, h, flag, dt):
 
-        limit1 = np.deg2rad(45)
-        limit2 = -np.deg2rad(45)
+        # limit1 = np.deg2rad(45)
+        # limit2 = -np.deg2rad(45)
         
-        kp = 0.1
-        kd = 0.01
-        ki = 0
+        kp = gains.kp_altitude
+        kd = gains.kd_altitude
+        ki = gains.ki_altitude
         
         if flag == 1:
             self.ah_integrator = 0
@@ -252,10 +253,11 @@ class Autopilot:
         self.ah_error_d1 = error
         
         u = kp*error + ki*self.ah_integrator + kd*self.ah_differentiator
+        u_sat = u
         
-        u_sat = self.sat(u, limit1, limit2)
-        if ki != 0:
-            self.ah_integrator = self.ah_integrator + dt/ki*(u_sat - u)
+        # u_sat = self.sat(u, limit1, limit2)
+        # if ki != 0:
+        #     self.ah_integrator = self.ah_integrator + dt/ki*(u_sat - u)
         
         return u_sat
 

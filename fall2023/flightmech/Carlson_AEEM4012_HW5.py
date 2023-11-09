@@ -1,6 +1,6 @@
 # Annika Carlson
 # Flight Mechanics, AEEM4012
-# Assignment 4 - MAV Trim Conditions
+# Assignment 5 - Autopilot 
 
 import sys
 sys.path.append('/Users/annikacarlson/Documents/flightmech/library')
@@ -27,7 +27,7 @@ Aero = mavAero()
 Vs = np.array([[0.],[0.],[0.]])
 Wind = wind(Vs)
 gains = ComputeGains()
-auto = Autopilot(P.ts_simulation, 10., 1.)
+auto = Autopilot(P.ts_simulation, 50., 5.)
 
 # initialize the simulation and signal generator
 sim_time = P.start_time
@@ -62,7 +62,7 @@ deltaas = []; deltaes = []; deltars = []; deltats = []
 # Initial targets
 Va = P.states0[3][0]
 Va_c = 35.
-h_c = 15.
+h_c = 50.
 chi_c = np.deg2rad(0.)
 state = MAV.state
 
@@ -71,8 +71,6 @@ sim_time = P.start_time
 while sim_time < P.end_time:
     t_next_plot = sim_time + P.ts_plotting
     while sim_time < t_next_plot:
-        # Wind (steady)
-        Va, alpha, beta = Wind.windout(state, Va, sim_time)
 
         # Set states
         pn, pe, pd, u, v, w, phi, theta, psi, p, q, r = state.flatten()
@@ -81,11 +79,17 @@ while sim_time < P.end_time:
         U = np.array([sim_time, phi, theta, psi, p, q, r, Va, -pd, Va_c, h_c, chi_c])
         deltae, deltaa, deltar, deltat = auto.update(U)
 
+        # Wind (steady)
+        Va, alpha, beta = Wind.windout(state, Va, sim_time)
+
         # Update forces and moments
         fx, fy, fz = Aero.forces(MAV.state, alpha, beta, deltaa, deltae, deltar, deltat, Va)
         l, m, n = Aero.moments(MAV.state, alpha, beta, deltaa, deltae, deltar, deltat, Va)
+
+        # Update state and run animation
         y = MAV.update(fx, fy, fz, l, m, n)
-        MAV_anim.update(y[0][0], y[1][0], y[2][0], y[6][0], y[7][0], y[8][0])
+        pn, pe, pd, u, v, w, phi, theta, psi, p, q, r = y.flatten()
+        MAV_anim.update(pn, pe, pd, phi, theta, psi)
 
         sim_time += P.ts_simulation
 
