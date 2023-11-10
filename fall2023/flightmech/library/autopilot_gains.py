@@ -8,7 +8,7 @@ import library.aerosonde_parameters as P
 x_trim = np.array([0., 0., 0., 34.9957342, -0.178955066,  0.516297664, -0.0123004054, 0.0147520897, 0., 0., 0., 0.])
 u_trim = np.array([-0.027192652340385412, 0.46236388117478694, -0.0038422387096093266, -0.004796900558456178])
 
-# do the tf stuff to get the answers and woo
+# transfer functions
 Va_trim = np.sqrt(x_trim[3]**2 + x_trim[4]**2 + x_trim[5]**2)
 alpha_trim = np.arctan(x_trim[5]/x_trim[3])
 beta_trim = np.arctan(x_trim[4]/Va_trim)
