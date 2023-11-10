@@ -48,6 +48,7 @@ class Autopilot:
                 self.altitude_state = 3
             self.initialize_integrator = 1
         
+        # Takeoff
         if self.altitude_state == 0:
             delta_t = 1
             theta_c = 10*(np.pi/180)
@@ -56,10 +57,11 @@ class Autopilot:
                 self.initialize_integrator = 1
             else:
                 self.initialize_integrator = 0
+
+        # Climb
         elif self.altitude_state == 1:
             delta_t = 1
             theta_c = self.airspeed_hold_pitch(Va_c, Va, self.initialize_integrator, self.dt)
-            
             if h >= h_c - self.altitude_take_off_zone:
                 self.altitude_state = 3
                 self.initialize_integrator = 1
@@ -68,6 +70,8 @@ class Autopilot:
                 self.initialize_integrator = 1
             else:
                 self.initialize_integrator = 0
+
+        # Descent
         elif self.altitude_state == 2:
             delta_t = 0
             theta_c = self.airspeed_hold_pitch(Va_c, Va, self.initialize_integrator, self.dt)
@@ -76,6 +80,8 @@ class Autopilot:
                 self.initialize_integrator = 1
             else:
                 self.initialize_integrator = 0
+
+        # Altitude hold
         elif self.altitude_state == 3:
             delta_t = self.airspeed_hold_throttle(Va_c, Va, self.initialize_integrator, self.dt)
             theta_c = self.altitude_hold(h_c, h, self.initialize_integrator, self.dt)
@@ -87,7 +93,8 @@ class Autopilot:
                 self.initialize_integrator = 1
             else:
                 self.initialize_integrator = 0
-                
+
+        # Set elevator        
         if t == 0:
             delta_e = self.pitch_hold(theta_c, theta, q, 1, self.dt)
         else:
@@ -234,8 +241,8 @@ class Autopilot:
 
     def altitude_hold(self, h_c, h, flag, dt):
 
-        # limit1 = np.deg2rad(45)
-        # limit2 = -np.deg2rad(45)
+        limit1 = np.deg2rad(45)
+        limit2 = -np.deg2rad(45)
         
         kp = gains.kp_altitude
         kd = gains.kd_altitude
@@ -255,14 +262,14 @@ class Autopilot:
         u = kp*error + ki*self.ah_integrator + kd*self.ah_differentiator
         u_sat = u
         
-        # u_sat = self.sat(u, limit1, limit2)
-        # if ki != 0:
-        #     self.ah_integrator = self.ah_integrator + dt/ki*(u_sat - u)
+        u_sat = self.sat(u, limit1, limit2)
+        if ki != 0:
+            self.ah_integrator = self.ah_integrator + dt/ki*(u_sat - u)
         
         return u_sat
 
-
-    def sat(self, inn, up_limit, low_limit):
+    @staticmethod
+    def sat(inn, up_limit, low_limit):
         if inn > up_limit:
             out = up_limit
         elif inn < low_limit:

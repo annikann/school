@@ -71,6 +71,15 @@ sim_time = P.start_time
 while sim_time < P.end_time:
     t_next_plot = sim_time + P.ts_plotting
     while sim_time < t_next_plot:
+        if sim_time <= 10:
+            h_c = 50.
+        elif sim_time <= 25.:
+            chi_c = np.deg2rad(15)
+        elif sim_time <= 35.:
+            Va_c = 50.
+            h_c = 100.
+        elif sim_time <= 45.:
+            h_c = 50.
 
         # Set states
         pn, pe, pd, u, v, w, phi, theta, psi, p, q, r = state.flatten()
@@ -139,7 +148,7 @@ while sim_time < P.end_time:
     moment_plot.legend(loc='upper left'); moment_plot.grid(); moment_plot.set_title('Moments (Nm)'); moment_plot.set_ylim(-50, 50)
     trans_plot.legend(loc="upper left"); trans_plot.grid(); trans_plot.set_title('Position (m)')
     vel_plot.legend(loc="upper left"); vel_plot.grid(); vel_plot.set_title('Velocity (m/s)')
-    angles_plot.legend(loc="upper left"); angles_plot.grid(); angles_plot.set_title('Angle (deg)'); angles_plot.set_ylim(-360,360)
+    angles_plot.legend(loc="upper left"); angles_plot.grid(); angles_plot.set_title('Angle (deg)') #; angles_plot.set_ylim(-360,360)
     angleRs_plot.legend(loc="upper left"); angleRs_plot.grid(); angleRs_plot.set_title('Angle Rate (deg/s)')
     deltas_plot.legend(loc="upper left"); deltas_plot.grid(); deltas_plot.set_title('Deflections (deg)')
 
