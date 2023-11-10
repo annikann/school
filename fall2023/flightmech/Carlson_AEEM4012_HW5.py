@@ -73,12 +73,12 @@ while sim_time < P.end_time:
     while sim_time < t_next_plot:
         if sim_time <= 10:
             h_c = 50.
-        elif sim_time <= 25.:
-            chi_c = np.deg2rad(15)
-        elif sim_time <= 35.:
+        elif sim_time <= 20.:
             Va_c = 50.
             h_c = 100.
-        elif sim_time <= 45.:
+        elif sim_time <= 30.:
+            chi_c = np.deg2rad(15)
+        elif sim_time <= 40.:
             h_c = 50.
 
         # Set states
