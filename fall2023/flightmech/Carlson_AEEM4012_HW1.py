@@ -39,6 +39,7 @@ psis = []
 pns = []
 pes = []
 pds = []
+pdfs = []
 
 while sim_time < SIM.end_time:
 
