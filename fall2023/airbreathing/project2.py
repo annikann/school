@@ -15,19 +15,19 @@ iP01 = 21.278                           # turbine inlet pressure, bar
 etaInfT = 0.92                          # turbine polytropic eff
 etaM = 0.99                             # mechanical efficiency
 wComp = 437774.0                        # compressor work, J/kg
-mdotA = 280.                            # air mass flow, kg/s
-mdotC = 240.                            # fan bypass air mass flow, kg/s
-mdotH = 40.                             # core air mass flow, kg/s
+wFan = 18200.6                          # fan work, J/kg
+mdotA = 280.                            # fan mass flow, kg/s
+mdotH = 40.                             # core mass flow, kg/s
 mdotF = 1.862                           # fuel mass flow, kg/s
-mdotT = mdotH + mdotF                   # total mass flow into turbine, kg/s
-wTurb = (1/etaM)*(mdotA)*(wComp)        # turbine work required, J/kg
-pTurb = mdotT*wTurb                     # power required, W
+mdotT = mdotF + mdotH                   # total mass flow, kg/s
 n = 172.32                              # rotational speed, rev/s
 omega = 2*np.pi*n                       # rotational speed, rad/s
 Ca1 = 275.                              # axial speed into turbine, m/s
 alpha1 = np.deg2rad(0.)                 # inlet rel gas angle, rad
 R = 287.                                # r, J/kgK
 
+# calc turb specific work required, J/kg
+wTurb = (mdotA*wFan + mdotH*wComp)/(etaM*mdotT)
 
 # calc gas angles from design params
 def gasAngles(phi, psi, lam):
@@ -184,12 +184,8 @@ psi = 3.3                               # blade loading coeff @ rm
 s2C1, s2Ca1, s2Cw1, s2C2, s2Ca2, s2Cw2, s2C3, s2Ca3, s2Cw3, s2V2, s2V3, s2b2, s2a2, s2b3, s2a3, s2T03, s2P03, s2w, s2rm \
     = meanCalcs(s1a3, s1Ca3, phi, psi, lambdam, s1T03, s1P03, omega)
 
-
 # -------------------- Stage 3 Mean --------------------
 wleft = wTurb - (s1w + s2w)
-print(wTurb)
-print(s1w, s2w)
-print(wleft)
 rinc = s2rm/s1rm
 s3rm = rinc*s2rm
 s3C1, s3Ca1, s3Cw1, s3C2, s3Ca2, s3Cw2, s3C3, s3Ca3, s3Cw3, s3V2, s3V3, s3b2, s3a2, s3b3, s3a3, s3T03, s3P03, s3phi, \
@@ -256,6 +252,7 @@ print('--stage 1 root--', \
       '\npsit_s1:', s1psit, \
       '\nlamt_s1:', s1lamt, \
       '\n-- radii --', \
+      '\nr_m_s1:', s1rm, \
       '\nr_r_s1:', s1rr, \
       '\nr_t_s1:', s1rt)
 print('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
@@ -298,6 +295,7 @@ print('-- stage 2 root --',\
       '\npsit_s2:', s2psit, \
       '\nlamt_s2:', s2lamt, \
       '\n-- radii --',\
+      '\nr_m_s2', s2rm, \
       '\nr_r_s2:', s2rr, \
       '\nr_t_s2:', s2rt)
 print('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
@@ -343,6 +341,7 @@ print('-- stage 3 root --',\
       '\npsit_s3:', s3psit, \
       '\nlamt_s3:', s3lamt, \
       '\n-- radii --',\
+      '\nr_m_s3:', s3rm, \
       '\nr_r_s3:', s3rr, \
       '\nr_t_s3:', s3rt)
 print('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
