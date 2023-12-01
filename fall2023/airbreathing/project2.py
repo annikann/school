@@ -187,6 +187,9 @@ s2C1, s2Ca1, s2Cw1, s2C2, s2Ca2, s2Cw2, s2C3, s2Ca3, s2Cw3, s2V2, s2V3, s2b2, s2
 
 # -------------------- Stage 3 Mean --------------------
 wleft = wTurb - (s1w + s2w)
+print(wTurb)
+print(s1w, s2w)
+print(wleft)
 rinc = s2rm/s1rm
 s3rm = rinc*s2rm
 s3C1, s3Ca1, s3Cw1, s3C2, s3Ca2, s3Cw2, s3C3, s3Ca3, s3Cw3, s3V2, s3V3, s3b2, s3a2, s3b3, s3a3, s3T03, s3P03, s3phi, \
