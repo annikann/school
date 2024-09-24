@@ -36,6 +36,8 @@ q23 = a*f23(s2) + B*g23(s2)
 q34 = a*f34(s3) + B*g34(s3)
 q45 = a*f45(s4) + B*g45(s4)
 
+print(q12[-1], q23[-1], q34[-1])
+
 max = np.max(q12)
 min = np.min(q34)
 print(max, min)
