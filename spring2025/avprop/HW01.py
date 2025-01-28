@@ -38,12 +38,6 @@ CD0vals = np.array([0.012, 0.012, 0.02267, 0.028, 0.027])
 K1_interp = interp1d(Mnums, K1vals, kind='linear')
 CD0_interp = interp1d(Mnums, CD0vals, kind='linear')
 
-# # Interpolate K1 and CD0 values
-# interpolated_K1 = K1_interp(Ms)
-# interpolated_CD0 = CD0_interp(Ms)
-
-# print(interpolated_CD0)
-
 ## Loop through each Mach number to calculate:
 #   dynamic pressure, drag coefficient, lift coefficient, L, D and L/D
 qs = []
@@ -118,13 +112,47 @@ plt.tight_layout(); plt.grid(); plt.legend()
 
 plt.figure('L/D vs Mach Number')
 plt.plot(Ms, LDs[0], label='Load Factor = 1')
-plt.plot(Ms, LDs[1], label='Load Factor = 4')
+# plt.plot(Ms, LDs[1], label='Load Factor = 4')
 plt.xlabel("Mach Number")
 plt.ylabel("L/D")
 plt.title("Lift to Drag Ratio vs Mach Number")
 plt.tight_layout(); plt.grid(); plt.legend()
 
-plt.show()
+# plt.show()
 
-# print(qs)
-# print(K1s,CD0s)
+# ~~~~~~~~~~~~~~
+#   Question 6
+# ~~~~~~~~~~~~~~
+
+## Set known values
+M = 0.8
+a = 40000       # altitude, ft
+n = 1           # load factors
+gc = 32.174     # gravitational constant, ft*lbm/lbf*s^2
+
+# HF-1 Aircraft Data 
+Wmax = 40000    # max gross TOW, lbf
+Wi = 0.9*Wmax   # initial weight, 90% MaxGTOW, lbf
+S = 720         # wing area, sq ft
+
+# From Altitude tables
+y = 1.4                 # specific heat ratio
+d = 0.1858              # pressure ratio at 40kft, P/Pstd
+Pstd = 2116.2           # std day reference pressure, lbf/ft^2
+th = 0.7519             # std day temperature ratio at 40kft
+aspeed = th*1116        # speed of sound at 40kft, ft/s
+rho = 0.07647*(d/th)    # density at 40kft, lbm/ft^3
+
+## First, calculate CL and CD
+q = 0.5*y*d*Pstd*(M**2)
+
+# from table 1.4 for Mach 0.8:
+K1 = 0.20
+K2 = 0.0
+CD0 = 0.012
+
+CL = (n*Wi)/(q*S)
+CD = K1*(CL**2) + (K2*CL) + CD0
+
+## Calculate TSFC from equation 1.36b:
+TSFC = (1.0 + 0.35*M)*np.sqrt(th)
