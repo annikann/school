@@ -25,9 +25,6 @@ S = 720         # wing area, sq ft
 y = 1.4                 # specific heat ratio
 d = 0.1858              # pressure ratio at 40kft, P/Pstd
 Pstd = 2116.2           # std day reference pressure, lbf/ft^2
-th = 0.7519             # std day temperature ratio at 40kft
-aspeed = th*1116        # speed of sound at 40kft, ft/s
-rho = 0.07647*(d/th)    # density at 40kft, lbm/ft^3
 
 ## Set up given data from table 1.4 to interpolate K1 and CD0 values
 Mnums = np.array([0.0, 0.8, 1.2, 1.4, 2.0])
@@ -88,40 +85,34 @@ for j in range(len(ns)):
 
         LDs[j].append(L/D)
 
-plt.figure('Lift vs Mach Number')
-plt.plot(Ms, Ls[0], label='Load Factor = 1')
-plt.plot(Ms, Ls[1], label='Load Factor = 4')
-plt.xlabel("Mach Number")
-plt.ylabel("Lift, L (lbf)")
-plt.title("Lift vs Mach Number")
+plt.figure("Fig 1")
+plt.plot(Ms, Ls[0], label='Lift')
+plt.plot(Ms, Ds[0], label='Drag')
+plt.xlabel("Mach Number"); plt.xlim(0.3, 2.0), plt.xticks(np.arange(0.3, 2.1, 0.1))
+plt.ylabel("Force (lbf)"); plt.ylim(0.0, 40000.0)
+plt.title("HF-1 Lift & Drag at 40kft, 90% Max GTOW (n=1)")
 plt.tight_layout(); plt.grid(); plt.legend()
 
-plt.figure('Drag vs Mach Number')
-plt.plot(Ms, Ds[0], label='Load Factor = 1')
-plt.xlabel("Mach Number")
-plt.ylabel("Drag, D (lbf)")
-plt.title("HF-1 Level Flight (n=1) Drag")
+plt.figure("Fig 2")
+plt.plot(Ms, Ls[1], label='Lift')
+plt.plot(Ms, Ds[1], label='Drag')
+plt.xlabel("Mach Number"); plt.xlim(0.3, 2.0), plt.xticks(np.arange(0.3, 2.1, 0.1))
+plt.ylabel("Force (lbf)"); plt.ylim(0.0, 250000.0)
+plt.title("HF-1 Lift & Drag at 40kft, 90% Max GTOW (n=4)")
 plt.tight_layout(); plt.grid(); plt.legend()
 
-# plt.figure('Drag vs Mach Number')
-# plt.plot(Ms, Ds[1], label='Load Factor = 4')
-# plt.xlabel("Mach Number")
-# plt.ylabel("Drag, D (lbf)")
-# plt.title("HF-1 (n=4) Drag")
-# plt.tight_layout(); plt.grid(); plt.legend()
-
-plt.figure('L/D vs Mach Number')
+plt.figure("Fig 3")
 plt.plot(Ms, LDs[0], label='Load Factor = 1')
-# plt.plot(Ms, LDs[1], label='Load Factor = 4')
-plt.xlabel("Mach Number")
-plt.ylabel("L/D")
-plt.title("Lift to Drag Ratio vs Mach Number")
+plt.plot(Ms, LDs[1], label='Load Factor = 4')
+plt.xlabel("Mach Number"); plt.xlim(0.3, 2.0), plt.xticks(np.arange(0.3, 2.1, 0.1))
+plt.ylabel("L/D"); plt.ylim(0.0, 12.0)
+plt.title("HF-1 Lift to Drag Ratio at 40kft, 90% Max GTOW")
 plt.tight_layout(); plt.grid(); plt.legend()
 
-# plt.show()
+plt.show()
 
 # ~~~~~~~~~~~~~~
-#   Question 6
+#   Question 5
 # ~~~~~~~~~~~~~~
 
 ## Set known values
