@@ -109,8 +109,6 @@ plt.ylabel("L/D"); plt.ylim(0.0, 12.0)
 plt.title("HF-1 Lift to Drag Ratio at 40kft, 90% Max GTOW")
 plt.tight_layout(); plt.grid(); plt.legend()
 
-plt.show()
-
 # ~~~~~~~~~~~~~~
 #   Question 5
 # ~~~~~~~~~~~~~~
@@ -120,6 +118,7 @@ M = 0.8
 a = 40000       # altitude, ft
 n = 1           # load factors
 gc = 32.174     # gravitational constant, ft*lbm/lbf*s^2
+g0 = gc
 
 # HF-1 Aircraft Data 
 Wmax = 40000    # max gross TOW, lbf
@@ -131,7 +130,7 @@ y = 1.4                 # specific heat ratio
 d = 0.1858              # pressure ratio at 40kft, P/Pstd
 Pstd = 2116.2           # std day reference pressure, lbf/ft^2
 th = 0.7519             # std day temperature ratio at 40kft
-aspeed = th*1116        # speed of sound at 40kft, ft/s
+a = 1116*np.sqrt(th)    # speed of sound at 40kft, ft/s
 rho = 0.07647*(d/th)    # density at 40kft, lbm/ft^3
 
 ## First, calculate CL and CD
@@ -146,4 +145,40 @@ CL = (n*Wi)/(q*S)
 CD = K1*(CL**2) + (K2*CL) + CD0
 
 ## Calculate TSFC from equation 1.36b:
-TSFC = (1.0 + 0.35*M)*np.sqrt(th)
+TSFC = (1.0 + 0.35*M)*np.sqrt(th)     # (lbm/h)/lbf
+
+## Calculate the Range Factor
+V = M*a*(3600/6080)             # nm/h
+RF = (CL/CD)*(V/TSFC)*(gc/g0)   # nm
+
+## Calculate s for a range of weight fractions for both cruise climb and level cruise
+Wfrac = np.arange(0.1, 1.05, 0.05).round(2)
+Wfrac_CC = []
+Wfrac_LC = []
+s_CC = []
+s_LC = []
+s05 = []
+
+for i in range(len(Wfrac)):
+    s_CC_val = -RF*np.log(Wfrac[i])
+    s_LC_val = 2*RF*(1 - (np.sqrt(Wfrac[i])))
+
+    if Wfrac[i] == 0.5:
+        s05.append(s_CC_val)
+        s05.append(s_LC_val)
+
+    s_CC.append(s_CC_val)
+    s_LC.append(s_LC_val)
+
+plt.figure("Fig 4")
+plt.plot(Wfrac, s_CC, label='Cruise Climb')
+plt.scatter(0.5, s05[0], label='Cruise Climb Range @ $W_f$/$W_i$ = 0.5')
+plt.plot(Wfrac, s_LC, label='Level Cruise')
+plt.scatter(0.5, s05[1], label='Level Cruise Range @ $W_f$/$W_i$ = 0.5')
+plt.xlabel("Weight Fraction, $W_f$/$W_i$"); plt.xlim(0.1, 1.0), plt.xticks(np.arange(0.1, 1.1, 0.1))
+plt.ylabel("Range, s (ft)"); plt.ylim(0.0, 10000.0)
+plt.title("HF-1 Range at 40kft, 90% Max GTOW")
+plt.tight_layout(); plt.grid(); plt.legend()
+
+plt.show()
+
