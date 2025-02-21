@@ -39,7 +39,7 @@ def Mach_Rayleigh(M1, gamma, To_Tostar):
         return ((((gamma + 1) * (M**2)) / ((1 + gamma * (M**2))**2)) * (2 + (gamma - 1) * (M**2))) - To_Tostar
 
     def solve_M(To_Tostar, gamma):
-        M_subsonic_guess = 0.5
+        M_subsonic_guess = 0.1
         M_supersonic_guess = 1.01
         M_subsonic = fsolve(equation, M_subsonic_guess, args=(To_Tostar, gamma))[0]
         M_supersonic = fsolve(equation, M_supersonic_guess, args=(To_Tostar, gamma))[0]
@@ -76,10 +76,12 @@ def RayleighFlow(M1, gamma, To_Tostar_2):
         ["V / V*", f"{V_Vstar:.4f}"],
     ]
 
-    # print("\nRayleigh Flow Results:")
-    print(tabulate(table, headers, tablefmt="grid"))
+    print("\nRayleigh Flow Results")
+    print(tabulate(table, headers, tablefmt="grid", floatfmt=".4f"))
 
-    return [M, P_Pstar, T_Tstar, rho_rhostar, Po_Postar, To_Tostar, V_Vstar]
+    results = [M, P_Pstar, T_Tstar, rho_rhostar, Po_Postar, To_Tostar, V_Vstar]
+
+    return results
 
 
 
