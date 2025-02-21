@@ -6,6 +6,10 @@ import numpy as np
 from scipy.optimize import fsolve
 from tabulate import tabulate
 
+def phi_Msqd_Rayleigh(M, gamma):
+    phi_Msqd = ((M**2)*(1 + ((gamma - 1)/2)*(M**2)))/((1 + gamma*(M**2))**2)
+    return phi_Msqd
+
 def P_Pstar_Rayleigh(M, gamma):
     P_Pstar = (1 + gamma) / (1 + gamma*M**2)
     return P_Pstar
@@ -58,6 +62,7 @@ def RayleighFlow(M1, gamma, To_Tostar_2):
         To_Tostar = To_Tostar_2
 
     # Compute all ratios
+    phi_Msqd = phi_Msqd_Rayleigh(M, gamma)
     P_Pstar = P_Pstar_Rayleigh(M, gamma)
     T_Tstar = T_Tstar_Rayleigh(M, gamma)
     rho_rhostar = rho_rhostar_Rayleigh(M, gamma)
@@ -68,10 +73,11 @@ def RayleighFlow(M1, gamma, To_Tostar_2):
     headers = ["Parameter", "Value"]
     table = [
         ["Mach Number (M)", f"{M:.4f}"],
+        ["𝜙(M^2)", f"{phi_Msqd:.4f}"],
         ["P / P*", f"{P_Pstar:.4f}"],
-        ["T / T*", f"{T_Tstar:.4f}"],
-        ["ρ / ρ*", f"{rho_rhostar:.4f}"],
+        #["ρ / ρ*", f"{rho_rhostar:.4f}"],
         ["Po / Po*", f"{Po_Postar:.4f}"],
+        ["T / T*", f"{T_Tstar:.4f}"],
         ["To / To*", f"{To_Tostar:.4f}"],
         ["V / V*", f"{V_Vstar:.4f}"],
     ]

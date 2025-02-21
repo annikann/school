@@ -6,6 +6,10 @@ import numpy as np
 from scipy.optimize import fsolve
 from tabulate import tabulate
 
+def I_Istar_Fanno(M, gamma):
+    I_Istar = (1 + gamma*(M**2))/(M*np.sqrt(2*(gamma + 1)*(1 + ((gamma - 1)/2)*(M**2))))
+    return I_Istar
+
 def T_Tstar_Fanno(M, gamma):
     T_Tstar = (gamma + 1)/(2 + (gamma - 1)*(M**2))
     return T_Tstar
@@ -43,18 +47,24 @@ def FannoFlow(M1, cf, L, D, gamma):
     Ms = [M1, M2]
     results = []
     for i in range(len(Ms)):
+        I_Istar = I_Istar_Fanno(Ms[i], gamma)
         P_Pstar = P_Pstar_Fanno(Ms[i], gamma)
         T_Tstar = T_Tstar_Fanno(Ms[i], gamma)
         Po_Postar = Po_Postar_Fanno(Ms[i], gamma)
         rho_rhostar = rho_rhostar_Fanno(Ms[i], gamma)
 
+        if i == 0: fLmax_D = fLmax_D_1
+        else: fLmax_D = fLmax_D_2
+
         headers = ["Parameter", "Value"]
         table = [
             ["Mach Number (M)", f"{Ms[i]:.4f}"],
+            ["4cfL* / D", f"{fLmax_D}"],
+            ["I / I*", f"{I_Istar:.4f}"],
             ["P / P*", f"{P_Pstar:.4f}"],
-            ["T / T*", f"{T_Tstar:.4f}"],
             ["Po / Po*", f"{Po_Postar:.4f}"],
-            ["ρ / ρ*", f"{rho_rhostar:.4f}"],
+            ["T / T*", f"{T_Tstar:.4f}"],
+            #["ρ / ρ*", f"{rho_rhostar:.4f}"],
         ]
 
         print("\nFanno Flow Results")
