@@ -1,12 +1,12 @@
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~
-#         Fanno Flow        
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Fanno FLow Functions
+# Annika Carlson
+# carlsoai@mail.uc.edu
 
 import numpy as np
 from scipy.optimize import fsolve
 from tabulate import tabulate
 
-def FannoFlow(M1:float, cf:float, L:float, D:float, y:float):
+def fanno(M1:float, cf:float, L:float, D:float, y:float):
     """
     Function to calculate change in flow parameters with friction (Fanno Flow).
     
@@ -64,20 +64,20 @@ def FannoFlow(M1:float, cf:float, L:float, D:float, y:float):
         if i == 0: fLmax_D = fLmax_D_1
         else: fLmax_D = fLmax_D_2
 
-        headers = ["Parameter", "Value"]
-        table = [
-            ["Mach Number (M)", f"{Ms[i]:.4f}"],
-            ["4cfL* / D", f"{fLmax_D}"],
-            ["I / I*", f"{I_Istar:.4f}"],
-            ["P / P*", f"{P_Pstar:.4f}"],
-            ["Po / Po*", f"{Po_Postar:.4f}"],
-            ["T / T*", f"{T_Tstar:.4f}"],
-            ["ρ / ρ*", f"{rho_rhostar:.4f}"],
-        ]
+        # headers = ["Parameter", "Value"]
+        # table = [
+        #     ["Mach Number (M)", f"{Ms[i]:.4f}"],
+        #     ["4cfL* / D", f"{fLmax_D}"],
+        #     ["I / I*", f"{I_Istar:.4f}"],
+        #     ["P / P*", f"{P_Pstar:.4f}"],
+        #     ["Po / Po*", f"{Po_Postar:.4f}"],
+        #     ["T / T*", f"{T_Tstar:.4f}"],
+        #     ["ρ / ρ*", f"{rho_rhostar:.4f}"],
+        # ]
 
-        print("\nFanno Flow Results")
-        print('Station ' + str(i + 1) + ':')
-        print(tabulate(table, headers, tablefmt="grid", floatfmt=".4f"))
+        # print("\nFanno Flow Results")
+        # print('Station ' + str(i + 1) + ':')
+        # print(tabulate(table, headers, tablefmt="grid", floatfmt=".4f"))
 
         results.append([Ms[i], P_Pstar, T_Tstar, Po_Postar, rho_rhostar])
 

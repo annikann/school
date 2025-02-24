@@ -1,6 +1,6 @@
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#         Rayleigh Flow        
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Rayleigh FLow Functions
+# Annika Carlson
+# carlsoai@mail.uc.edu
 
 import numpy as np
 from scipy.optimize import fsolve
@@ -22,7 +22,7 @@ def Mach_Rayleigh(M1:float, y:float, To_Tostar:float):
     
     return solve_M(To_Tostar, y)[0] if M1 < 1.0 else solve_M(To_Tostar, y)[1]
 
-def RayleighFlow(M1, y, To_Tostar_2):
+def rayleigh(M1, y, To_Tostar_2):
     """
     Function to calculate change in flow parameters with heat addition (Rayleigh Flow).
     
@@ -63,30 +63,31 @@ def RayleighFlow(M1, y, To_Tostar_2):
         To_Tostar = To_Tostar_2
 
     # Compute all ratios
-    phi_Msqd = ((M**2)*(1 + ((y - 1)/2)*(M**2)))/((1 + y*(M**2))**2)
+    phiMsqd = ((M**2)*(1 + ((y - 1)/2)*(M**2)))/((1 + y*(M**2))**2)
     P_Pstar = (1 + y)/(1 + y*M**2)
     T_Tstar = ((M**2)*(1 + y)**2) / ((1 + y*(M**2))**2)
     rho_rhostar = (1/(M**2))*((1 + y*(M**2))/(1 + y))
     Po_Postar = P_Pstar*((1+(M**2)*(y - 1)/2)**(y/(y - 1)))/(1 + (y - 1)/2)**(y/(y - 1))
     V_Vstar = T_Tstar/P_Pstar 
 
-    # Create a table with labeled values
-    headers = ["Parameter", "Value"]
-    table = [
-        ["Mach Number (M)", f"{M:.4f}"],
-        ["𝜙(M^2)", f"{phi_Msqd:.4f}"],
-        ["P / P*", f"{P_Pstar:.4f}"],
-        ["ρ / ρ*", f"{rho_rhostar:.4f}"],
-        ["Po / Po*", f"{Po_Postar:.4f}"],
-        ["T / T*", f"{T_Tstar:.4f}"],
-        ["To / To*", f"{To_Tostar:.4f}"],
-        ["V / V*", f"{V_Vstar:.4f}"],
-    ]
+    # # Create a table with labeled values
+    # headers = ["Parameter", "Value"]
+    # table = [
+    #     ["Mach Number (M)", f"{M:.4f}"],
+    #     ["𝜙(M^2)", f"{phiMsqd:.4f}"],
+    #     ["P / P*", f"{P_Pstar:.4f}"],
+    #     ["ρ / ρ*", f"{rho_rhostar:.4f}"],
+    #     ["Po / Po*", f"{Po_Postar:.4f}"],
+    #     ["T / T*", f"{T_Tstar:.4f}"],
+    #     ["To / To*", f"{To_Tostar:.4f}"],
+    #     ["V / V*", f"{V_Vstar:.4f}"],
+    # ]
 
-    print("\nRayleigh Flow Results")
-    print(tabulate(table, headers, tablefmt="grid", floatfmt=".4f"))
+    # print("\nRayleigh Flow Results")
+    # print(tabulate(table, headers, tablefmt="grid", floatfmt=".4f"))
 
-    return [M, phi_Msqd, P_Pstar, T_Tstar, rho_rhostar, Po_Postar, To_Tostar, V_Vstar]
+    return np.round(M, 6), np.round(phiMsqd, 6), np.round(To_Tostar, 6), np.round(T_Tstar, 6), np.round(Po_Postar, 6), \
+            np.round(P_Pstar, 6), np.round(rho_rhostar, 6), np.round(V_Vstar, 6)
 
 
 
