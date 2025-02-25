@@ -9,6 +9,7 @@ def Mach_Rayleigh(M1:float, y:float, To_Tostar:float):
     """
     Function to calculate mach number after heat addition.
     """
+    # solve for Mach number from To/Tostar equation
     def equation(M, To_Tostar, y):
         return ((((y + 1) * (M**2)) / ((1 + y * (M**2))**2)) * (2 + (y - 1) * (M**2))) - To_Tostar
 
@@ -19,6 +20,7 @@ def Mach_Rayleigh(M1:float, y:float, To_Tostar:float):
         M_supersonic = fsolve(equation, M_supersonic_guess, args=(To_Tostar, y))[0]
         return np.array([M_subsonic, M_supersonic])
     
+    # return sub or supersonic based on M1
     return solve_M(To_Tostar, y)[0] if M1 < 1.0 else solve_M(To_Tostar, y)[1]
 
 def rayleigh(M1, y, To_Tostar_2):
@@ -53,7 +55,7 @@ def rayleigh(M1, y, To_Tostar_2):
     V_Vstar : float
         Sonic reference condition velocity ratio.
     """
-    # Compute Mach number or To_Tostar ratio based on inputs
+    # compute Mach number or To_Tostar ratio based on inputs
     if To_Tostar_2 is None:
         M = M1
         To_Tostar = ((M**2)*(1 + y)**2 / (1 + y*(M**2))**2) * (1 + (M**2)*(y - 1)/2)/(1 + (y - 1)/2)
@@ -61,12 +63,22 @@ def rayleigh(M1, y, To_Tostar_2):
         M = Mach_Rayleigh(M1, y, To_Tostar_2)
         To_Tostar = To_Tostar_2
 
-    # Compute all ratios
+    # calculate phi
     phiMsqd = ((M**2)*(1 + ((y - 1)/2)*(M**2)))/((1 + y*(M**2))**2)
+
+    # calculate sonic pressure ratio
     P_Pstar = (1 + y)/(1 + y*M**2)
+
+    # calculate sonic temperature ratio
     T_Tstar = ((M**2)*(1 + y)**2) / ((1 + y*(M**2))**2)
+
+    # calculate sonic density ratio
     rho_rhostar = (1/(M**2))*((1 + y*(M**2))/(1 + y))
+
+    # calculate sonic total pressure ratio
     Po_Postar = P_Pstar*((1+(M**2)*(y - 1)/2)**(y/(y - 1)))/(1 + (y - 1)/2)**(y/(y - 1))
+
+    # calculate sonic velocity ratio
     V_Vstar = T_Tstar/P_Pstar 
 
     return M, np.round(phiMsqd, 6), np.round(To_Tostar, 6), np.round(T_Tstar, 6), np.round(Po_Postar, 6), \
