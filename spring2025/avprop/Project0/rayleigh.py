@@ -69,7 +69,7 @@ def rayleigh(M1, y, To_Tostar_2):
     Po_Postar = P_Pstar*((1+(M**2)*(y - 1)/2)**(y/(y - 1)))/(1 + (y - 1)/2)**(y/(y - 1))
     V_Vstar = T_Tstar/P_Pstar 
 
-    return np.round(M, 6), np.round(phiMsqd, 6), np.round(To_Tostar, 6), np.round(T_Tstar, 6), np.round(Po_Postar, 6), \
+    return M, np.round(phiMsqd, 6), np.round(To_Tostar, 6), np.round(T_Tstar, 6), np.round(Po_Postar, 6), \
             np.round(P_Pstar, 6), np.round(rho_rhostar, 6), np.round(V_Vstar, 6)
 
 

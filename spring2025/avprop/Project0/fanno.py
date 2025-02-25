@@ -29,7 +29,7 @@ def fanno(M1:float, y:float, cf:float, L:float, D:float):
     fLmax_D : float
         Friction factor at max length L to achieve sonic flow from M.
     I_Istar : float
-        Sonic reference condition momentum function.
+        Sonic reference condition impulse function ratio.
     T_Tstar : float
         Sonic reference condition static temperature ratio.
     Po_Postar : float
@@ -69,6 +69,7 @@ def fanno(M1:float, y:float, cf:float, L:float, D:float):
         Po_Postar = (1/Ms[i])*((2 + (y - 1)*(Ms[i]**2))/(y + 1))**((y + 1)/(2*(y - 1)))
         rho_rhostar = (1/Ms[i])*np.sqrt((2 + (y - 1)*(Ms[i]**2))/(y + 1))
 
-        results.append([Ms[i], fLmax_D, I_Istar, T_Tstar, Po_Postar, P_Pstar, rho_rhostar])
+        results.append([Ms[i], np.round(fLmax_D, 6), np.round(I_Istar, 6), np.round(T_Tstar, 6), \
+                        np.round(Po_Postar, 6), np.round(P_Pstar, 6), np.round(rho_rhostar, 6)])
 
     return  results

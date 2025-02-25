@@ -40,7 +40,8 @@ for i, y in enumerate(ys):
         T_Tts[i, k], P_Pts[i, k], rho_rhots[i, k], A_Astars[i, k], MFPsRgcs[i, k], mus[i, k], vs[i, k] = compflow(M, y)
 
     # output tables
-    data = list(zip(np.round(Ms, 2), T_Tts[i, :], P_Pts[i, :], rho_rhots[i, :], A_Astars[i, :], MFPsRgcs[i, :], mus[i, :], vs[i, :]))
+    data = list(zip(np.round(Ms, 2), np.round(T_Tts[i, :], 6), np.round(P_Pts[i, :], 6), np.round(rho_rhots[i, :], 6), \
+                    np.round(A_Astars[i, :], 6), np.round(MFPsRgcs[i, :], 6), np.round(mus[i, :], 6), np.round(vs[i, :], 6)))
     headers = ["M", "T/Tt", "P/Pt", "ρ/ρt", "A/A*", "MFP√(R/gc)", "μ", "v"]
     units = ["-", "-", "-", "-", "-", "W-s/m-√T", "deg", "deg"]
     fulldata = [headers] + [units] + data
