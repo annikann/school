@@ -1,6 +1,6 @@
-# Outputs for Comp. Flow and Norm. Shock Functions
-# Slade Brooks
-# brooksl@mail.uc.edu
+# Simple One-Dimensional Flow Functions
+# Slade Brooks & Annika Carlson
+# brooksl@mail.uc.edu | carlsoai@mail.uc.edu
 
 import numpy as np
 import os
@@ -12,7 +12,7 @@ from rayleigh import rayleigh
 from fanno import fanno
 
 current_folder = os.path.dirname(os.path.abspath(__file__))
-results_folder = os.path.join(current_folder, "results")
+results_folder = os.path.join(current_folder, "simpleflowtabs")
 os.makedirs(results_folder, exist_ok=True)
 files = glob.glob(os.path.join(results_folder, "*"))
 for file in files:
@@ -41,7 +41,7 @@ for i, y in enumerate(ys):
 
     # output tables
     data = list(zip(np.round(Ms, 2), T_Tts[i, :], P_Pts[i, :], rho_rhots[i, :], A_Astars[i, :], MFPsRgcs[i, :], mus[i, :], vs[i, :]))
-    headers = ["M", "T/Tt", "P/Pt", "rho/rhot", "A/A*", "MFP√(R/gc)", "mu", "v"]
+    headers = ["M", "T/Tt", "P/Pt", "ρ/ρt", "A/A*", "MFP√(R/gc)", "μ", "v"]
     units = ["-", "-", "-", "-", "-", "W-s/m-√T", "deg", "deg"]
     fulldata = [headers] + [units] + data
     colalign = ['center', 'center', 'center', 'center', 'center', 'center', 'center', 'center']
@@ -70,7 +70,7 @@ for i, yx in enumerate(yxs):
 
     # output tables
     data = list(zip(np.round(Mxs, 2), Mys[i, :], Pty_Ptxs[i, :], Py_Pxs[i, :], rhoy_rhoxs[i, :], Ty_Txs[i, :]))
-    headers = ["Mx", "My", "Pty/Ptx", "Py/Px", "rhoy/rhox", "Ty/Tx"]
+    headers = ["Mx", "My", "Pty/Ptx", "Py/Px", "ρy/ρx", "Ty/Tx"]
     fulldata = [headers] + data
     colalign = ['center', 'center', 'center', 'center', 'center', 'center']
     output_path = os.path.join(results_folder, f"Normshock_y{ys[i]:.2f}_table.txt") 
@@ -116,26 +116,24 @@ for i, y in enumerate(ys):
 # range of mach numbers and gammas
 Ms = np.arange(0., 4.001, 0.01)
 ys = np.array([1.4])
-T_Tts = np.empty((len(ys), len(Ms)))
-P_Pts = np.empty((len(ys), len(Ms)))
-rho_rhots = np.empty((len(ys), len(Ms)))
-A_Astars = np.empty((len(ys), len(Ms)))
-MFPsRgcs = np.empty((len(ys), len(Ms)))
-mus = np.empty((len(ys), len(Ms)))
-vs = np.empty((len(ys), len(Ms)))
+fLmax_D = np.empty((len(ys), len(Ms)))
+I_Istar = np.empty((len(ys), len(Ms)))
+T_Tstar = np.empty((len(ys), len(Ms)))
+Po_Postar = np.empty((len(ys), len(Ms)))
+P_Pstar = np.empty((len(ys), len(Ms)))
 
 # loop through and calculate parameters
-# for i, y in enumerate(ys):
-#     for k, M in enumerate(Ms):
-#         T_Tts[i, k], P_Pts[i, k], rho_rhots[i, k], A_Astars[i, k], MFPsRgcs[i, k], mus[i, k], vs[i, k] = fanno(M, y)
+for i, y in enumerate(ys):
+    for k, M in enumerate(Ms):
+        _, fLmax_D[i, k], I_Istar[i, k], T_Tstar[i, k], Po_Postar[i, k], P_Pstar[i, k], _ = fanno(M, y, None, None, None)[0]
 
     # output tables
-    # data = list(zip(np.round(Ms, 2), T_Tts[i, :], P_Pts[i, :], rho_rhots[i, :], A_Astars[i, :], MFPsRgcs[i, :], mus[i, :], vs[i, :]))
-    # headers = ["M", "T/Tt", "P/Pt", "rho/rhot", "A/A*", "MFP√(R/gc)", "mu", "v"]
-    # units = ["-", "-", "-", "-", "-", "W-s/m-√T", "deg", "deg"]
-    # fulldata = [headers] + [units] + data
-    # colalign = ['center', 'center', 'center', 'center', 'center', 'center', 'center', 'center']
-    # output_path = os.path.join(results_folder, f"Fannoflow_y{ys[i]:.2f}_table.txt") 
-    # with open(output_path, "w", encoding="utf-8") as file:
-    #     file.write(f"----------=============== Fanno Flow Tables (gamma={ys[i]:.2f}) ===============----------\n")
-    #     file.write(tabulate(fulldata, headers="firstrow", colalign=colalign, tablefmt="fancy_grid"))  
+    data = list(zip(np.round(Ms, 2), fLmax_D[i, :], I_Istar[i, :], T_Tstar[i, :], Po_Postar[i, :], P_Pstar[i, :]))
+    headers = ["M", "4cfL*/D", "I/I*", "T/T*", "Po/Po*", "P/P*"]
+    units = ["-", "-", "-", "-", "-", "-"]
+    fulldata = [headers] + [units] + data
+    colalign = ['center', 'center', 'center', 'center', 'center', 'center']
+    output_path = os.path.join(results_folder, f"Fannoflow_y{ys[i]:.2f}_table.txt") 
+    with open(output_path, "w", encoding="utf-8") as file:
+        file.write(f"----------=============== Fanno Flow Tables (gamma={ys[i]:.2f}) ===============----------\n")
+        file.write(tabulate(fulldata, headers="firstrow", colalign=colalign, tablefmt="fancy_grid"))  

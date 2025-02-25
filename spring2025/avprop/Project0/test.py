@@ -29,3 +29,34 @@ results2a = rayleigh.RayleighFlow(M1, y_a, To_Tostar_2a)
 # y = 1.4
 
 # results = fanno.FannoFlow(M1, cf, L, D, y)
+
+
+# headers = ["Parameter", "Value"]
+# table = [
+#     ["Mach Number (M)", f"{Ms[i]:.4f}"],
+#     ["4cfL* / D", f"{fLmax_D}"],
+#     ["I / I*", f"{I_Istar:.4f}"],
+#     ["P / P*", f"{P_Pstar:.4f}"],
+#     ["Po / Po*", f"{Po_Postar:.4f}"],
+#     ["T / T*", f"{T_Tstar:.4f}"],
+#     ["ρ / ρ*", f"{rho_rhostar:.4f}"],
+# ]
+
+# print("\nFanno Flow Results")
+# print('Station ' + str(i + 1) + ':')
+# print(tabulate(table, headers, tablefmt="grid", floatfmt=".4f"))
+
+# headers = ["Parameter", "Value"]
+# table = [
+#     ["Mach Number (M)", f"{M:.4f}"],
+#     ["𝜙(M^2)", f"{phiMsqd:.4f}"],
+#     ["P / P*", f"{P_Pstar:.4f}"],
+#     ["ρ / ρ*", f"{rho_rhostar:.4f}"],
+#     ["Po / Po*", f"{Po_Postar:.4f}"],
+#     ["T / T*", f"{T_Tstar:.4f}"],
+#     ["To / To*", f"{To_Tostar:.4f}"],
+#     ["V / V*", f"{V_Vstar:.4f}"],
+# ]
+
+# print("\nRayleigh Flow Results")
+# print(tabulate(table, headers, tablefmt="grid", floatfmt=".4f"))

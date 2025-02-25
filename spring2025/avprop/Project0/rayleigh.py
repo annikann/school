@@ -4,7 +4,6 @@
 
 import numpy as np
 from scipy.optimize import fsolve
-from tabulate import tabulate
 
 def Mach_Rayleigh(M1:float, y:float, To_Tostar:float):
     """
@@ -40,7 +39,7 @@ def rayleigh(M1, y, To_Tostar_2):
     M : float
         Mach number.
     phi_Msqd : float
-        ADD DESCRIPTION.
+        Entropy change parameter.
     P_Pstar : float
         Sonic reference condition static pressure ratio.
     T_Tstar : float
@@ -69,22 +68,6 @@ def rayleigh(M1, y, To_Tostar_2):
     rho_rhostar = (1/(M**2))*((1 + y*(M**2))/(1 + y))
     Po_Postar = P_Pstar*((1+(M**2)*(y - 1)/2)**(y/(y - 1)))/(1 + (y - 1)/2)**(y/(y - 1))
     V_Vstar = T_Tstar/P_Pstar 
-
-    # # Create a table with labeled values
-    # headers = ["Parameter", "Value"]
-    # table = [
-    #     ["Mach Number (M)", f"{M:.4f}"],
-    #     ["𝜙(M^2)", f"{phiMsqd:.4f}"],
-    #     ["P / P*", f"{P_Pstar:.4f}"],
-    #     ["ρ / ρ*", f"{rho_rhostar:.4f}"],
-    #     ["Po / Po*", f"{Po_Postar:.4f}"],
-    #     ["T / T*", f"{T_Tstar:.4f}"],
-    #     ["To / To*", f"{To_Tostar:.4f}"],
-    #     ["V / V*", f"{V_Vstar:.4f}"],
-    # ]
-
-    # print("\nRayleigh Flow Results")
-    # print(tabulate(table, headers, tablefmt="grid", floatfmt=".4f"))
 
     return np.round(M, 6), np.round(phiMsqd, 6), np.round(To_Tostar, 6), np.round(T_Tstar, 6), np.round(Po_Postar, 6), \
             np.round(P_Pstar, 6), np.round(rho_rhostar, 6), np.round(V_Vstar, 6)
