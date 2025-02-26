@@ -40,16 +40,17 @@ for i, y in enumerate(ys):
         T_Tts[i, k], P_Pts[i, k], rho_rhots[i, k], A_Astars[i, k], MFPsRgcs[i, k], mus[i, k], vs[i, k] = compflow(M, y)
 
     # output tables
-    data = list(zip(np.round(Ms, 2), np.round(T_Tts[i, :], 6), np.round(P_Pts[i, :], 6), np.round(rho_rhots[i, :], 6), \
-                    np.round(A_Astars[i, :], 6), np.round(MFPsRgcs[i, :], 6), np.round(mus[i, :], 6), np.round(vs[i, :], 6)))
+    data = list(zip(Ms, T_Tts[i, :], P_Pts[i, :], rho_rhots[i, :], A_Astars[i, :], MFPsRgcs[i, :], mus[i, :], vs[i, :]))
     headers = ["M", "T/Tt", "P/Pt", "ρ/ρt", "A/A*", "MFP√(R/gc)", "μ", "v"]
     units = ["-", "-", "-", "-", "-", "W-s/m-√T", "deg", "deg"]
-    fulldata = [headers] + [units] + data
+    header_units = [f"{h}\n({u})" for h, u in zip(headers, units)]
+    fulldata = [header_units] + data
     colalign = ['center', 'center', 'center', 'center', 'center', 'center', 'center', 'center']
     output_path = os.path.join(results_folder, f"Compflow_y{ys[i]:.2f}_table.txt") 
     with open(output_path, "w", encoding="utf-8") as file:
         file.write(f"----------=============== Compressible Flow Tables (gamma={ys[i]:.2f}) ===============----------\n")
-        file.write(tabulate(fulldata, headers="firstrow", colalign=colalign, tablefmt="fancy_grid"))  
+        file.write(tabulate(fulldata, headers="firstrow", colalign=colalign, tablefmt="fancy_grid", \
+                            floatfmt=(".2f", ".6f", ".6f", ".6f", ".6f", ".6f", ".6f", ".6f")))    
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~
 #       Normal Shock      
@@ -70,14 +71,15 @@ for i, yx in enumerate(yxs):
         Mys[i, k], Pty_Ptxs[i, k], Py_Pxs[i, k], rhoy_rhoxs[i, k], Ty_Txs[i, k] = normshock(Mx, yx)
 
     # output tables
-    data = list(zip(np.round(Mxs, 2), Mys[i, :], Pty_Ptxs[i, :], Py_Pxs[i, :], rhoy_rhoxs[i, :], Ty_Txs[i, :]))
+    data = list(zip(Mxs, Mys[i, :], Pty_Ptxs[i, :], Py_Pxs[i, :], rhoy_rhoxs[i, :], Ty_Txs[i, :]))
     headers = ["Mx", "My", "Pty/Ptx", "Py/Px", "ρy/ρx", "Ty/Tx"]
     fulldata = [headers] + data
     colalign = ['center', 'center', 'center', 'center', 'center', 'center']
     output_path = os.path.join(results_folder, f"Normshock_y{ys[i]:.2f}_table.txt") 
     with open(output_path, "w", encoding="utf-8") as file:
         file.write(f"----------=============== Normal Shock Tables (gamma={yxs[i]:.2f}) ===============----------\n")
-        file.write(tabulate(fulldata, headers="firstrow", colalign=colalign, tablefmt="fancy_grid"))
+        file.write(tabulate(fulldata, headers="firstrow", colalign=colalign, tablefmt="fancy_grid", \
+                            floatfmt=(".2f", ".2f", ".6f", ".6f", ".6f", ".6f")))
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~
 #       Rayleigh Flow      
@@ -100,15 +102,15 @@ for i, y in enumerate(ys):
         _, phiMsqds[i, k], Tt_Ttstar[i, k], T_Tstar[i, k], Pt_Ptstar[i, k], P_Pstar[i, k], _, _ = rayleigh(M, y, None)
 
     # output tables
-    data = list(zip(np.round(Ms, 2), phiMsqds[i, :], Tt_Ttstar[i, :], T_Tstar[i, :], Pt_Ptstar[i, :], P_Pstar[i, :]))
+    data = list(zip(Ms, phiMsqds[i, :], Tt_Ttstar[i, :], T_Tstar[i, :], Pt_Ptstar[i, :], P_Pstar[i, :]))
     headers = ["M", "𝜙(M^2)", "Tt/Ttstar", "T/Tstar", "Pt/Ptstar", "P/Pstar"]
-    units = ["-", "-", "-", "-", "-", "-"]
-    fulldata = [headers] + [units] + data
+    fulldata = [headers] + data
     colalign = ['center', 'center', 'center', 'center', 'center', 'center']
     output_path = os.path.join(results_folder, f"Rayleighflow_y{ys[i]:.2f}_table.txt") 
     with open(output_path, "w", encoding="utf-8") as file:
         file.write(f"----------=============== Rayleigh Flow Tables (gamma={ys[i]:.2f}) ===============----------\n")
-        file.write(tabulate(fulldata, headers="firstrow", colalign=colalign, tablefmt="fancy_grid"))  
+        file.write(tabulate(fulldata, headers="firstrow", colalign=colalign, tablefmt="fancy_grid", \
+                            floatfmt=(".2f", ".6f", ".6f", ".6f", ".6f", ".6f")))  
 
 # ~~~~~~~~~~~~~~~~~~~~~~
 #       Fanno Flow      
@@ -129,12 +131,12 @@ for i, y in enumerate(ys):
         _, fLmax_D[i, k], I_Istar[i, k], T_Tstar[i, k], Po_Postar[i, k], P_Pstar[i, k], _ = fanno(M, y, None, None, None)[0]
 
     # output tables
-    data = list(zip(np.round(Ms, 2), fLmax_D[i, :], I_Istar[i, :], T_Tstar[i, :], Po_Postar[i, :], P_Pstar[i, :]))
+    data = list(zip(Ms, fLmax_D[i, :], I_Istar[i, :], T_Tstar[i, :], Po_Postar[i, :], P_Pstar[i, :]))
     headers = ["M", "4cfL*/D", "I/I*", "T/T*", "Po/Po*", "P/P*"]
-    units = ["-", "-", "-", "-", "-", "-"]
-    fulldata = [headers] + [units] + data
+    fulldata = [headers] + data
     colalign = ['center', 'center', 'center', 'center', 'center', 'center']
     output_path = os.path.join(results_folder, f"Fannoflow_y{ys[i]:.2f}_table.txt") 
     with open(output_path, "w", encoding="utf-8") as file:
         file.write(f"----------=============== Fanno Flow Tables (gamma={ys[i]:.2f}) ===============----------\n")
-        file.write(tabulate(fulldata, headers="firstrow", colalign=colalign, tablefmt="fancy_grid"))  
+        file.write(tabulate(fulldata, headers="firstrow", colalign=colalign, tablefmt="fancy_grid", \
+                            floatfmt=(".2f", ".6f", ".6f", ".6f", ".6f", ".6f")))  

@@ -81,8 +81,7 @@ def rayleigh(M1, y, To_Tostar_2):
     # calculate sonic velocity ratio
     V_Vstar = T_Tstar/P_Pstar 
 
-    return M, np.round(phiMsqd, 6), np.round(To_Tostar, 6), np.round(T_Tstar, 6), np.round(Po_Postar, 6), \
-            np.round(P_Pstar, 6), np.round(rho_rhostar, 6), np.round(V_Vstar, 6)
+    return M, phiMsqd, To_Tostar, T_Tstar, Po_Postar, P_Pstar, rho_rhostar, V_Vstar
 
 
 

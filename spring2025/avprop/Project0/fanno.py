@@ -83,7 +83,6 @@ def fanno(M1:float, y:float, cf:float, L:float, D:float):
         # calculate sonic density ratio
         rho_rhostar = (1/Ms[i])*np.sqrt((2 + (y - 1)*(Ms[i]**2))/(y + 1))
 
-        results.append([Ms[i], np.round(fLmax_D, 6), np.round(I_Istar, 6), np.round(T_Tstar, 6), \
-                        np.round(Po_Postar, 6), np.round(P_Pstar, 6), np.round(rho_rhostar, 6)])
+        results.append([Ms[i], fLmax_D, I_Istar, T_Tstar, Po_Postar, P_Pstar, rho_rhostar])
 
     return  results
