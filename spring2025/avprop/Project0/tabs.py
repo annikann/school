@@ -48,7 +48,7 @@ for i, y in enumerate(ys):
     colalign = ['center', 'center', 'center', 'center', 'center', 'center', 'center', 'center']
     output_path = os.path.join(results_folder, f"Compflow_y{ys[i]:.2f}_table.txt") 
     with open(output_path, "w", encoding="utf-8") as file:
-        file.write(f"----------=============== Compressible Flow Tables (gamma={ys[i]:.2f}) ===============----------\n")
+        file.write(f"-----===== Compressible Flow Tables (gamma={ys[i]:.2f}) =====-----\n")
         file.write(tabulate(fulldata, headers="firstrow", colalign=colalign, tablefmt="fancy_grid", \
                             floatfmt=(".2f", ".6f", ".6f", ".6f", ".6f", ".6f", ".6f", ".6f")))    
 
@@ -77,7 +77,7 @@ for i, yx in enumerate(yxs):
     colalign = ['center', 'center', 'center', 'center', 'center', 'center']
     output_path = os.path.join(results_folder, f"Normshock_y{ys[i]:.2f}_table.txt") 
     with open(output_path, "w", encoding="utf-8") as file:
-        file.write(f"----------=============== Normal Shock Tables (gamma={yxs[i]:.2f}) ===============----------\n")
+        file.write(f"-----===== Normal Shock Tables (gamma={yxs[i]:.2f}) =====-----\n")
         file.write(tabulate(fulldata, headers="firstrow", colalign=colalign, tablefmt="fancy_grid", \
                             floatfmt=(".2f", ".2f", ".6f", ".6f", ".6f", ".6f")))
 
@@ -108,7 +108,7 @@ for i, y in enumerate(ys):
     colalign = ['center', 'center', 'center', 'center', 'center', 'center']
     output_path = os.path.join(results_folder, f"Rayleighflow_y{ys[i]:.2f}_table.txt") 
     with open(output_path, "w", encoding="utf-8") as file:
-        file.write(f"----------=============== Rayleigh Flow Tables (gamma={ys[i]:.2f}) ===============----------\n")
+        file.write(f"-----===== Rayleigh Flow Tables (gamma={ys[i]:.2f}) =====-----\n")
         file.write(tabulate(fulldata, headers="firstrow", colalign=colalign, tablefmt="fancy_grid", \
                             floatfmt=(".2f", ".6f", ".6f", ".6f", ".6f", ".6f")))  
 
@@ -137,6 +137,6 @@ for i, y in enumerate(ys):
     colalign = ['center', 'center', 'center', 'center', 'center', 'center']
     output_path = os.path.join(results_folder, f"Fannoflow_y{ys[i]:.2f}_table.txt") 
     with open(output_path, "w", encoding="utf-8") as file:
-        file.write(f"----------=============== Fanno Flow Tables (gamma={ys[i]:.2f}) ===============----------\n")
+        file.write(f"-----===== Fanno Flow Tables (gamma={ys[i]:.2f}) =====-----\n")
         file.write(tabulate(fulldata, headers="firstrow", colalign=colalign, tablefmt="fancy_grid", \
                             floatfmt=(".2f", ".6f", ".6f", ".6f", ".6f", ".6f")))  
