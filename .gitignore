@@ -1,8 +1,2 @@
 *.DS_Store
-*/__pycache__/
-/fall2023/controltheory/library/__pycache__/
-/fall2023/flightmech/library/__pycache__/
-/spring2025/avprop/Project0/__pycache__/
-/spring2025/.DS_Store
-/spring2025/avprop/.DS_Store
-/spring2025/avprop/Project0/.DS_Store
+*__pycache__/
