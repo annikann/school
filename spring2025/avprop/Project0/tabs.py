@@ -58,7 +58,7 @@ for i, y in enumerate(ys):
 
 # range of mach numbers and gammas
 Mxs = np.arange(1., 4.001, 0.01)
-yxs = np.array([1.4])
+yxs = np.array([1.4, 1.33])
 Mys = np.empty((len(ys), len(Ms)))
 Pty_Ptxs = np.empty((len(ys), len(Ms)))
 Py_Pxs = np.empty((len(ys), len(Ms)))
