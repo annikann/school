@@ -4,12 +4,14 @@
 
 import numpy as np
 import os
+import sys
 import glob
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from tabulate import tabulate
-from compflow import compflow
-from normshock import normshock
-from rayleigh import rayleigh
-from fanno import fanno
+from utils.compflow import compflow
+from utils.normshock import normshock
+from utils.rayleigh import rayleigh
+from utils.fanno import fanno
 
 current_folder = os.path.dirname(os.path.abspath(__file__))
 results_folder = os.path.join(current_folder, "simpleflowtabs")
