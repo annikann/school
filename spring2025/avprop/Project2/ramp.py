@@ -135,26 +135,46 @@ def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float,  pi
             else:
                 # solve across the second oblique shock the same way as last
                 B2 = shockRelation(M=M01, theta=theta2, y=y)
-                M1n_s2 = M0*np.sin(np.deg2rad(B2))
-                M2n_s2, Pty2_Ptx2, _, _, _ = normshock(M1n_s2, y)
+                M1n_s2 = M01*np.sin(np.deg2rad(B2))
+                M2n_s2, Pty2_Ptx2, Py2_Px2, _, _ = normshock(M1n_s2, y)
                 M02 = M2n_s2/np.sin(np.deg2rad(B2) - np.deg2rad(theta2))
     
-                # solve across the terminal normal shock
-                M1x = M02
-                M1y, Pty3_Ptx3, _, _, _ = normshock(M1x, y)
+                # check to see if flow becomes subsonic, and no normal shock occurs
+                if M02 < 1:
+                    # set M1 from M2 and A1/A2 
+                    M1 = M1_design
 
-                # final mach number after the terminal shock, going into the diffuser
-                M1 = M1y
+                    # calculate A0
+                    A0 = A1*(M1/M02)*((1 + ((y - 1)/2)*M02**2)/(1 + ((y - 1)/2)*M1**2))**((y + 1) / (2 * (y - 1)))
 
-                # set A0
-                A0 = A1
+                    # calculate total pressure loss across all of the shocks
+                    eta_r = Pty1_Ptx1*Pty2_Ptx2
+                    Pt1 = Pt0*eta_r
 
-                # calculate total pressure loss across all of the shocks
-                eta_r = Pty1_Ptx1*Pty2_Ptx2*Pty3_Ptx3
-                Pt1 = Pt0*eta_r
+                    # calculate inlet additive drag for the streamtube (psf)
+                    D_add = (P0*(Py2_Px2)*uu.psf2psi)*A1*(y*M1*
+                            ((1 + 0.5 * (y - 1) * M02**2) / (1 + 0.5 * (y - 1) * M1**2))**(y / (2 * (y - 1))) *
+                            (M1 * ((1 + 0.5 * (y - 1) * M02**2) / (1 + 0.5 * (y - 1) * M1**2))**0.5 - M02) +
+                            ((1 + 0.5 * (y - 1) * M02**2) / (1 + 0.5 * (y - 1) * M1**2))**(y / (y - 1)) - 1)
 
-                # no additive drag
-                D_add = 0.0
+                # solve normal shock if flow is still supersonic
+                else: 
+                    # solve across the terminal normal shock
+                    M1x = M02
+                    M1y, Pty3_Ptx3, _, _, _ = normshock(M1x, y)
+
+                    # final mach number after the terminal shock, going into the diffuser
+                    M1 = M1y
+
+                    # set A0
+                    A0 = A1
+
+                    # calculate total pressure loss across all of the shocks
+                    eta_r = Pty1_Ptx1*Pty2_Ptx2*Pty3_Ptx3
+                    Pt1 = Pt0*eta_r
+
+                    # no additive drag
+                    D_add = 0.0
 
         print(M01)
         print(M02)
@@ -194,7 +214,7 @@ def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float,  pi
 
     return results
 
-M0 = 1.05
+M0 = 2.0
 M2 = 0.65
 A2 = 1749.209
 A1 = 1523.499
