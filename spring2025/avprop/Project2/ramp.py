@@ -34,7 +34,7 @@ def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float,  pi
     A2 : float
         Fan face area.
     pi_d : float
-        Diffuser total pressure loss.
+        Diffuser total pressure ratio.
         
     Returns
     -------
@@ -60,7 +60,7 @@ def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float,  pi
 
     # freestream total conditions
     Tt0 = uu.degF2r(T0)/compflow(M0, y)[0]
-    Pt0 = P0/compflow(0.9, y)[1]*uu.psf2psi
+    Pt0 = P0/compflow(M0, y)[1]*uu.psf2psi
 
     # supersonic cases
     if M0 > 1.0:
@@ -89,10 +89,11 @@ def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float,  pi
 
         # calculate total pressure loss across all of the shocks
         eta_r = Pty1_Ptx1*Pty2_Ptx2*Pty3_Ptx3
+        Pt1 = Pt0*eta_r
 
         # calculate mass flow rate at A1
         MFP1 = compflow(M1, y)[4]/1.28758
-        mdot1 = (A1*(Pt0*MFP1))/np.sqrt(Tt0)
+        mdot1 = (A1*(Pt1*MFP1))/np.sqrt(Tt0)
 
         D_add = 0.0
         A0 = A1
@@ -134,7 +135,7 @@ def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float,  pi
     return results
 
 
-M0 = 0.9
+M0 = 1.75
 M2 = 0.65
 A2 = 1749.209
 A1 = 1523.499
