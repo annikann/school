@@ -159,6 +159,7 @@ def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float,  pi
 
                 # solve normal shock if flow is still supersonic
                 else: 
+                    print("flag")
                     # solve across the terminal normal shock
                     M1x = M02
                     M1y, Pty3_Ptx3, _, _, _ = normshock(M1x, y)
@@ -214,7 +215,7 @@ def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float,  pi
 
     return results
 
-M0 = 2.0
+M0 = 2.5
 M2 = 0.65
 A2 = 1749.209
 A1 = 1523.499
