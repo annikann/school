@@ -5,6 +5,7 @@
 import numpy as np
 import sys, os
 sys.path.append(os.getcwd() + r"/..")
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from scipy.optimize import fsolve
 from utils.tbm import shockRelation
 from utils.normshock import normshock
@@ -13,7 +14,7 @@ import utils.stdatmos as std
 std = std.stdAtmos()
 import utils.units as uu
 
-def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float):
+def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float,  pi_d:float):
     """
     Function to calculate various inlet conditions including capture area,
     additive drag, and pressure recovery for both the subsonic and supersonic cases.
@@ -32,6 +33,8 @@ def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float):
         Inlet throat area.
     A2 : float
         Fan face area.
+    pi_d : float
+        Diffuser total pressure loss.
         
     Returns
     -------
@@ -98,7 +101,7 @@ def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float):
     else:
         # calculate M1 from M2 and A1/A2 
         def equation(M1):
-            return (M2/M1)*((1 + ((y - 1)/2)*M1**2)/(1 + ((y - 1)/2)*M2**2))**((y + 1) / (2 * (y - 1))) - (A1/A2)
+            return pi_d*(M2/M1)*((1 + ((y - 1)/2)*(M1**2))/(1 + ((y - 1)/2)*(M2**2)))**((y + 1)/(2 * (y - 1))) - (A1/A2)
         M1_guess = 0.1
         M1 = fsolve(equation, M1_guess)[0]
 
@@ -129,3 +132,44 @@ def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float):
             }
 
     return results
+
+
+M0 = 0.9
+M2 = 0.65
+A2 = 1749.209
+A1 = 1523.499
+theta1 = 14.362
+theta2 = 11.065
+pi_d = 0.98
+
+results = ramp(M0, M2, theta1, theta2, A1, A2, pi_d)
+# print(results)
+for key, value in results.items():
+    print(f"{key}: {value}")
+
+
+# y = 1.4
+# # Define the equation
+# def equation(M1):
+#     return pi_d * (M2 / M1) * ((1 + ((y - 1)/2) * M1**2) / (1 + ((y - 1)/2) * M2**2))**((y + 1) / (2 * (y - 1))) - (A1 / A2)
+
+# def Ax_Ay(Mx, My, Ptx_Pty):
+#     Arat = (1/Ptx_Pty)*(My/Mx)*((1 + ((y-1)/2)*Mx**2)/(1 + ((y-1)/2)*My**2))**((y + 1)/(2*(y - 1)))
+#     return Arat
+
+# # Create a range of M1 values (avoid dividing by zero!)
+# M1_vals = np.linspace(0.1, 3, 300)
+
+# # Evaluate the function
+# y_vals = Ax_Ay(M1_vals, M2, pi_d)
+
+# # Plot
+# import matplotlib.pyplot as plt
+# plt.plot(M1_vals, y_vals, label=r'$f(M_1)$')
+# plt.axhline(0, color='gray', linestyle='--')
+# plt.xlabel('M1')
+# plt.ylabel('f(M1)')
+# plt.title('Plot of equation(M1)')
+# plt.grid(True)
+# plt.legend()
+# plt.show()
