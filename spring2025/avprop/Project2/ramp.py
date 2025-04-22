@@ -62,62 +62,122 @@ def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float,  pi
     Tt0 = uu.degF2r(T0)/compflow(M0, y)[0]
     Pt0 = P0/compflow(M0, y)[1]*uu.psf2psi
 
+    # calculate M1 to achieve design M2 and A1/A2 
+    def equation(M1):
+        return pi_d*(M2/M1)*((1 + ((y - 1)/2)*(M1**2))/(1 + ((y - 1)/2)*(M2**2)))**((y + 1)/(2 * (y - 1))) - (A1/A2)
+    M1_guess = 0.1
+    M1_design = fsolve(equation, M1_guess)[0]
+
     # supersonic cases
     if M0 > 1.0:
-        # determine shock wave angle of the first oblique shock
-        B1 = shockRelation(M=M0, theta=theta1, y=y)
+        # calculate the max turning angle of the flow before the first shock
+        betas = np.linspace(1, 90, 50)
+        thetas1 = np.array([shockRelation(M=M0, B=beta) for beta in betas])
+        theta1_max = np.max(thetas1)
 
-        # get normal component of freestream mach number + solve like normal shock
-        M1n_s1 = M0*np.sin(np.deg2rad(B1))
-        M2n_s1, Pty1_Ptx1, _, _, _ = normshock(M1n_s1, y)
+        # if 1st turn angle is too high, need a normal shock instead
+        if theta1 > theta1_max:
+            M01, Pty1_Ptx1, Py1_Px1, _, _ = normshock(M0, y)
 
-        # calculate actual mach number after the first shock, M01
-        M01 = M2n_s1/np.sin(np.deg2rad(B1) - np.deg2rad(theta1))
+            # set M1 from M2 and A1/A2 
+            M1 = M1_design
 
-        # solve across the second oblique shock the same way
-        B2 = shockRelation(M=M01, theta=theta2, y=y)
-        M1n_s2 = M0*np.sin(np.deg2rad(B2))
-        M2n_s2, Pty2_Ptx2, _, _, _ = normshock(M1n_s2, y)
-        M02 = M2n_s2/np.sin(np.deg2rad(B2) - np.deg2rad(theta2))
+            # calculate A0
+            A0 = A1*(M1/M01)*((1 + ((y - 1)/2)*M01**2)/(1 + ((y - 1)/2)*M1**2))**((y + 1) / (2 * (y - 1)))
 
-        # solve across the terminal normal shock
-        M1x = M02
-        M1y, Pty3_Ptx3, _, _, _ = normshock(M1x, y)
+            # set total pressure loss across the shock
+            eta_r = Pty1_Ptx1
+            Pt1 = Pt0*eta_r
 
-        # final mach number after the terminal shock, going into the diffuser
-        M1 = M1y
+            # calculate inlet additive drag for the streamtube (psf)
+            D_add = (P0*(Py1_Px1)*uu.psf2psi)*A1*(y*M1*
+                    ((1 + 0.5 * (y - 1) * M01**2) / (1 + 0.5 * (y - 1) * M1**2))**(y / (2 * (y - 1))) *
+                    (M1 * ((1 + 0.5 * (y - 1) * M01**2) / (1 + 0.5 * (y - 1) * M1**2))**0.5 - M01) +
+                    ((1 + 0.5 * (y - 1) * M01**2) / (1 + 0.5 * (y - 1) * M1**2))**(y / (y - 1)) - 1)
 
-        # calculate total pressure loss across all of the shocks
-        eta_r = Pty1_Ptx1*Pty2_Ptx2*Pty3_Ptx3
-        Pt1 = Pt0*eta_r
+        # if 1st turn angle is achievable, solve oblique shock
+        else:
+            # determine shock wave angle of the first oblique shock
+            B1 = shockRelation(M=M0, theta=theta1, y=y)
+
+            # get normal component of freestream mach number + solve like normal shock
+            M1n_s1 = M0*np.sin(np.deg2rad(B1))
+            M2n_s1, Pty1_Ptx1, _, _, _ = normshock(M1n_s1, y)
+
+            # calculate actual mach number after the first shock, M01
+            M01 = M2n_s1/np.sin(np.deg2rad(B1) - np.deg2rad(theta1))
+
+            # calculate the max turning angle of the flow before the second shock
+            thetas2 = np.array([shockRelation(M=M01, B=beta) for beta in betas])
+            theta2_max = np.max(thetas2)
+
+            # if 2nd turn angle is too high, need a normal shock instead
+            if theta2 > theta2_max:
+                M02, Pty2_Ptx2, Py2_Px2, _, _ = normshock(M01, y)
+
+                # set M1 from M2 and A1/A2 
+                M1 = M1_design
+
+                # calculate A0
+                A0 = A1*(M1/M02)*((1 + ((y - 1)/2)*M02**2)/(1 + ((y - 1)/2)*M1**2))**((y + 1) / (2 * (y - 1)))
+
+                # calculate total pressure loss across all of the shocks
+                eta_r = Pty1_Ptx1*Pty2_Ptx2
+                Pt1 = Pt0*eta_r
+
+                # calculate inlet additive drag for the streamtube (psf)
+                D_add = (P0*(Py2_Px2)*uu.psf2psi)*A1*(y*M1*
+                        ((1 + 0.5 * (y - 1) * M02**2) / (1 + 0.5 * (y - 1) * M1**2))**(y / (2 * (y - 1))) *
+                        (M1 * ((1 + 0.5 * (y - 1) * M02**2) / (1 + 0.5 * (y - 1) * M1**2))**0.5 - M02) +
+                        ((1 + 0.5 * (y - 1) * M02**2) / (1 + 0.5 * (y - 1) * M1**2))**(y / (y - 1)) - 1)
+
+            # if 2nd turn angle is achievable, solve oblique shock
+            else:
+                # solve across the second oblique shock the same way as last
+                B2 = shockRelation(M=M01, theta=theta2, y=y)
+                M1n_s2 = M0*np.sin(np.deg2rad(B2))
+                M2n_s2, Pty2_Ptx2, _, _, _ = normshock(M1n_s2, y)
+                M02 = M2n_s2/np.sin(np.deg2rad(B2) - np.deg2rad(theta2))
+    
+                # solve across the terminal normal shock
+                M1x = M02
+                M1y, Pty3_Ptx3, _, _, _ = normshock(M1x, y)
+
+                # final mach number after the terminal shock, going into the diffuser
+                M1 = M1y
+
+                # set A0
+                A0 = A1
+
+                # calculate total pressure loss across all of the shocks
+                eta_r = Pty1_Ptx1*Pty2_Ptx2*Pty3_Ptx3
+                Pt1 = Pt0*eta_r
+
+                # no additive drag
+                D_add = 0.0
+
+        print(M01)
+        print(M02)
+        print(M1)
 
         # calculate mass flow rate at A1
         MFP1 = compflow(M1, y)[4]/1.28758
-        mdot1 = (A1*(Pt1*MFP1))/np.sqrt(Tt0)
-
-        D_add = 0.0
-        A0 = A1
+        mdot1 = (A1*(Pt1*MFP1))/np.sqrt(Tt0)  
 
     # subsonic cases
     else:
-        # calculate M1 from M2 and A1/A2 
-        def equation(M1):
-            return pi_d*(M2/M1)*((1 + ((y - 1)/2)*(M1**2))/(1 + ((y - 1)/2)*(M2**2)))**((y + 1)/(2 * (y - 1))) - (A1/A2)
-        M1_guess = 0.1
-        M1 = fsolve(equation, M1_guess)[0]
+        # set M1 from M2 and A1/A2 
+        M1 = M1_design
 
         # calculate mass flow rate at A1
         MFP1 = compflow(M1, y)[4]/1.28758
         mdot1 = (A1*(Pt0*MFP1))/np.sqrt(Tt0)
         
-        # nondimensionalized inlet additive drag
-        D_add_p0A1 = ( y * M1 *
-                        ((1 + 0.5 * (y - 1) * M0**2) / (1 + 0.5 * (y - 1) * M1**2))**(y / (2 * (y - 1))) *
-                        (M1 * ((1 + 0.5 * (y - 1) * M0**2) / (1 + 0.5 * (y - 1) * M1**2))**0.5 - M0) +
-                        ((1 + 0.5 * (y - 1) * M0**2) / (1 + 0.5 * (y - 1) * M1**2))**(y / (y - 1)) - 1)
-
-        # dimensionalize that guy
-        D_add = D_add_p0A1*(P0*uu.psf2psi)*A1   # psf
+        # inlet additive drag (psf)
+        D_add = (P0*uu.psf2psi)*A1*(y*M1*
+                ((1 + 0.5 * (y - 1) * M0**2) / (1 + 0.5 * (y - 1) * M1**2))**(y / (2 * (y - 1))) *
+                (M1 * ((1 + 0.5 * (y - 1) * M0**2) / (1 + 0.5 * (y - 1) * M1**2))**0.5 - M0) +
+                ((1 + 0.5 * (y - 1) * M0**2) / (1 + 0.5 * (y - 1) * M1**2))**(y / (y - 1)) - 1)
 
         # calculate capture area, A0
         A0 = A1*(M1/M0)*((1 + ((y - 1)/2)*M0**2)/(1 + ((y - 1)/2)*M1**2))**((y + 1) / (2 * (y - 1)))
@@ -134,8 +194,7 @@ def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float,  pi
 
     return results
 
-
-M0 = 1.75
+M0 = 1.05
 M2 = 0.65
 A2 = 1749.209
 A1 = 1523.499
