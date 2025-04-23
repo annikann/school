@@ -1,4 +1,4 @@
-# Inlet Design - Cycle Calc Integration
+# Inlet Design - External Compression Calculations
 # Annika Carlson
 # carlsoai@mail.uc.edu
 
@@ -16,8 +16,8 @@ import utils.units as uu
 
 def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float,  pi_d:float):
     """
-    Function to calculate various inlet conditions including capture area,
-    additive drag, and pressure recovery for both the subsonic and supersonic cases.
+    Function to account for external compression and calculate various inlet conditions including 
+    capture area, mass flow rate, and additive drag for subsonic and supersonic cases.
     
     Parameters
     ----------
@@ -26,9 +26,9 @@ def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float,  pi
     M2 : float
         Fan face Mach number.
     theta1 : float
-        First oblique shock deflection angle.
+        First ramp deflection angle.
     theta2 : float
-        Second oblique shock deflection angle.
+        Second ramp deflection angle.
     A1 : float
         Inlet throat area.
     A2 : float
@@ -56,7 +56,6 @@ def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float,  pi
     R = 53.34               # gas constant (ft*lbf/lbm*R)
     T0 = std.T(h)           # freestream static temp (degF) (SA at 40,000 ft)
     P0 = std.P(h)           # freestream static pressure (psf) (SA at 40,000 ft)
-    rho = std.rho(h)        # freestream density (slugs/ft^3)
 
     # freestream total conditions
     Tt0 = uu.degF2r(T0)/compflow(M0, y)[0]
@@ -85,7 +84,7 @@ def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float,  pi
             # calculate A0
             A0 = A1*(M1/M01)*((1 + ((y - 1)/2)*M01**2)/(1 + ((y - 1)/2)*M1**2))**((y + 1) / (2 * (y - 1)))
 
-            # set total pressure loss across the shock
+            # calculate ram efficiency
             eta_r = Pty1_Ptx1
             Pt1 = Pt0*eta_r
 
@@ -121,7 +120,7 @@ def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float,  pi
                 # calculate A0
                 A0 = A1*(M1/M02)*((1 + ((y - 1)/2)*M02**2)/(1 + ((y - 1)/2)*M1**2))**((y + 1) / (2 * (y - 1)))
 
-                # calculate total pressure loss across all of the shocks
+                # calculate ram efficiency
                 eta_r = Pty1_Ptx1*Pty2_Ptx2
                 Pt1 = Pt0*eta_r
 
@@ -147,7 +146,7 @@ def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float,  pi
                     # calculate A0
                     A0 = A1*(M1/M02)*((1 + ((y - 1)/2)*M02**2)/(1 + ((y - 1)/2)*M1**2))**((y + 1) / (2 * (y - 1)))
 
-                    # calculate total pressure loss across all of the shocks
+                    # calculate ram efficiency
                     eta_r = Pty1_Ptx1*Pty2_Ptx2
                     Pt1 = Pt0*eta_r
 
@@ -159,7 +158,6 @@ def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float,  pi
 
                 # solve normal shock if flow is still supersonic
                 else: 
-                    print("flag")
                     # solve across the terminal normal shock
                     M1x = M02
                     M1y, Pty3_Ptx3, _, _, _ = normshock(M1x, y)
@@ -170,16 +168,12 @@ def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float,  pi
                     # set A0
                     A0 = A1
 
-                    # calculate total pressure loss across all of the shocks
+                    # calculate ram efficiency
                     eta_r = Pty1_Ptx1*Pty2_Ptx2*Pty3_Ptx3
                     Pt1 = Pt0*eta_r
 
                     # no additive drag
                     D_add = 0.0
-
-        print(M01)
-        print(M02)
-        print(M1)
 
         # calculate mass flow rate at A1
         MFP1 = compflow(M1, y)[4]/1.28758
@@ -203,8 +197,10 @@ def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float,  pi
         # calculate capture area, A0
         A0 = A1*(M1/M0)*((1 + ((y - 1)/2)*M0**2)/(1 + ((y - 1)/2)*M1**2))**((y + 1) / (2 * (y - 1)))
 
+        # set ram efficiency
         eta_r = 1.0
 
+    # gather results into dictionary
     results = {
             "A0": A0,
             "M1": M1,
@@ -215,6 +211,7 @@ def ramp(M0:float, M2:float, theta1:float, theta2:float, A1:float, A2:float,  pi
 
     return results
 
+# test case
 M0 = 2.5
 M2 = 0.65
 A2 = 1749.209
@@ -227,30 +224,3 @@ results = ramp(M0, M2, theta1, theta2, A1, A2, pi_d)
 # print(results)
 for key, value in results.items():
     print(f"{key}: {value}")
-
-
-# y = 1.4
-# # Define the equation
-# def equation(M1):
-#     return pi_d * (M2 / M1) * ((1 + ((y - 1)/2) * M1**2) / (1 + ((y - 1)/2) * M2**2))**((y + 1) / (2 * (y - 1))) - (A1 / A2)
-
-# def Ax_Ay(Mx, My, Ptx_Pty):
-#     Arat = (1/Ptx_Pty)*(My/Mx)*((1 + ((y-1)/2)*Mx**2)/(1 + ((y-1)/2)*My**2))**((y + 1)/(2*(y - 1)))
-#     return Arat
-
-# # Create a range of M1 values (avoid dividing by zero!)
-# M1_vals = np.linspace(0.1, 3, 300)
-
-# # Evaluate the function
-# y_vals = Ax_Ay(M1_vals, M2, pi_d)
-
-# # Plot
-# import matplotlib.pyplot as plt
-# plt.plot(M1_vals, y_vals, label=r'$f(M_1)$')
-# plt.axhline(0, color='gray', linestyle='--')
-# plt.xlabel('M1')
-# plt.ylabel('f(M1)')
-# plt.title('Plot of equation(M1)')
-# plt.grid(True)
-# plt.legend()
-# plt.show()
